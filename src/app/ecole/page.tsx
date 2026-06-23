@@ -43,12 +43,18 @@ export default async function EcolePage() {
           étapes.
         </p>
 
-        <div className="mt-6">
+        <div className="mt-6 flex flex-wrap gap-3">
           <Link
             href="/ecole/matieres"
             className="inline-block rounded-lg bg-gray-900 px-4 py-2 font-medium text-white hover:bg-gray-800"
           >
             Gérer les matières
+          </Link>
+          <Link
+            href="/ecole/annees"
+            className="inline-block rounded-lg bg-gray-900 px-4 py-2 font-medium text-white hover:bg-gray-800"
+          >
+            Gérer les années scolaires
           </Link>
         </div>
       </section>
