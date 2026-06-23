@@ -56,8 +56,17 @@ Ne jamais construire plusieurs grosses fonctions en même temps.
 
 ## Commandes utiles
 
-> (À compléter une fois le projet initialisé — ex. lancer le serveur, les tests.)
+```
+npm run dev        # lancer le site en local (http://localhost:3000)
+npx tsc --noEmit   # vérifier qu'il n'y a pas d'erreur TypeScript
+```
 
-```
-# npm run dev   → lancer le site en local
-```
+- **Windows** : si une commande npm réseau échoue (certificats antivirus), préfixer avec
+  `NODE_OPTIONS=--use-system-ca`.
+- **Migrations SQL** : les fichiers `supabase/migrations/000X_*.sql` se lancent à la main dans
+  le SQL Editor de Supabase (copier-coller + Run), pas via la CLI.
+
+## Avancement
+
+> Le détail à jour (étape en cours + point de reprise) vit dans la mémoire Claude
+> (`avancement-projet-jang`), pas ici, pour éviter les doublons.
