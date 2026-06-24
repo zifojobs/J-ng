@@ -24,17 +24,33 @@ export default async function LoginPage({
 
         <form action={login} className="flex flex-col gap-4">
           <div className="flex flex-col gap-1">
-            <label htmlFor="email" className="text-sm font-medium text-gray-700">
-              Email
+            <label htmlFor="identifiant" className="text-sm font-medium text-gray-700">
+              Email ou matricule
             </label>
             <input
-              id="email"
-              name="email"
-              type="email"
+              id="identifiant"
+              name="identifiant"
+              type="text"
               required
-              autoComplete="email"
+              autoComplete="username"
               className="rounded-lg border border-gray-300 px-3 py-2 text-gray-900 outline-none focus:border-gray-900"
             />
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <label htmlFor="code_ecole" className="text-sm font-medium text-gray-700">
+              Code de l&apos;école
+            </label>
+            <input
+              id="code_ecole"
+              name="code_ecole"
+              type="text"
+              placeholder="ex. college-jang"
+              className="rounded-lg border border-gray-300 px-3 py-2 text-gray-900 outline-none focus:border-gray-900"
+            />
+            <p className="text-xs text-gray-500">
+              Élèves et parents uniquement (à laisser vide si vous vous connectez avec un email).
+            </p>
           </div>
 
           <div className="flex flex-col gap-1">
