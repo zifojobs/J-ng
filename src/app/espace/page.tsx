@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { requireProfil } from "@/lib/auth";
 import { logout } from "@/app/login/actions";
 
@@ -28,9 +29,20 @@ export default async function EspacePage() {
           Vous êtes connecté en tant que{" "}
           <span className="font-semibold text-gray-900">{roleLisible}</span>.
         </p>
-        <p className="mt-4 text-sm text-gray-500">
-          Votre espace sera construit dans les prochaines étapes.
-        </p>
+        {profil.role === "professeur" ? (
+          <div className="mt-6">
+            <Link
+              href="/espace/notes"
+              className="inline-block rounded-lg bg-gray-900 px-4 py-2 font-medium text-white hover:bg-gray-800"
+            >
+              Saisir des notes
+            </Link>
+          </div>
+        ) : (
+          <p className="mt-4 text-sm text-gray-500">
+            Votre espace sera construit dans les prochaines étapes.
+          </p>
+        )}
       </section>
     </main>
   );
