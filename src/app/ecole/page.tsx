@@ -39,7 +39,7 @@ export default async function EcolePage() {
           {ecole?.nom ?? "—"}
         </p>
         <p className="mt-4 text-sm text-gray-500">
-          La gestion des professeurs et élèves arrivera aux prochaines étapes.
+          La gestion des élèves arrivera à la prochaine étape.
         </p>
 
         <div className="mt-6 flex flex-wrap gap-3">
@@ -60,6 +60,12 @@ export default async function EcolePage() {
             className="inline-block rounded-lg bg-gray-900 px-4 py-2 font-medium text-white hover:bg-gray-800"
           >
             Gérer les classes
+          </Link>
+          <Link
+            href="/ecole/professeurs"
+            className="inline-block rounded-lg bg-gray-900 px-4 py-2 font-medium text-white hover:bg-gray-800"
+          >
+            Gérer les professeurs
           </Link>
         </div>
       </section>
