@@ -36,7 +36,7 @@ export default async function BulletinPage() {
 
   // Identité : école + classe (avec l'année).
   const [{ data: ecole }, { data: profilClasse }, { data: notes }] = await Promise.all([
-    supabase.from("ecoles").select("nom").single(),
+    supabase.from("ecoles").select("nom, adresse, telephone, directeur").single(),
     supabase
       .from("profils")
       .select("classe:classes ( nom, annees_scolaires ( libelle ) )")
@@ -87,6 +87,12 @@ export default async function BulletinPage() {
         {/* En-tête */}
         <header className="mb-6 border-b border-gray-300 pb-4 text-center">
           <p className="text-lg font-bold text-gray-900">{ecole?.nom ?? "École"}</p>
+          {ecole?.adresse ? (
+            <p className="mt-0.5 text-xs text-gray-600">{ecole.adresse}</p>
+          ) : null}
+          {ecole?.telephone ? (
+            <p className="text-xs text-gray-600">Tél. {ecole.telephone}</p>
+          ) : null}
           <h1 className="mt-2 text-xl font-bold text-gray-900">Bulletin de notes</h1>
         </header>
 
@@ -150,6 +156,17 @@ export default async function BulletinPage() {
             </tfoot>
           </table>
         )}
+
+        {/* Zone de signature / cachet du responsable (à droite, classique) */}
+        <section className="mt-10 flex justify-end">
+          <div className="w-56 text-center">
+            <p className="text-sm font-medium text-gray-900">
+              {ecole?.directeur ?? "Le responsable de l'école"}
+            </p>
+            <p className="mt-1 text-xs text-gray-500">Signature et cachet</p>
+            <div className="mt-16 border-t border-gray-400" />
+          </div>
+        </section>
 
         <footer className="mt-10 hidden justify-between text-xs text-gray-500 print:flex">
           <span>{ecole?.nom ?? "École"}</span>

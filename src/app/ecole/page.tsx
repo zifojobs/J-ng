@@ -40,6 +40,12 @@ export default async function EcolePage() {
         </p>
         <div className="mt-6 flex flex-wrap gap-3">
           <Link
+            href="/ecole/infos"
+            className="inline-block rounded-lg bg-gray-900 px-4 py-2 font-medium text-white hover:bg-gray-800"
+          >
+            Coordonnées de l&apos;école
+          </Link>
+          <Link
             href="/ecole/matieres"
             className="inline-block rounded-lg bg-gray-900 px-4 py-2 font-medium text-white hover:bg-gray-800"
           >
