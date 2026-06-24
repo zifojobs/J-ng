@@ -207,13 +207,21 @@ export default async function ElevesPage({
                   </p>
                   <p className="text-sm text-gray-500">Matricule : {e.identifiant}</p>
                 </div>
-                <form action={supprimerEleve}>
-                  <input type="hidden" name="id" value={e.id} />
-                  <input type="hidden" name="classe_id" value={classeChoisie.id} />
-                  <button className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm text-red-600 hover:bg-red-50">
-                    Supprimer
-                  </button>
-                </form>
+                <div className="flex items-center gap-2">
+                  <Link
+                    href={`/ecole/eleves/${e.id}/bulletin`}
+                    className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-100"
+                  >
+                    Bulletin
+                  </Link>
+                  <form action={supprimerEleve}>
+                    <input type="hidden" name="id" value={e.id} />
+                    <input type="hidden" name="classe_id" value={classeChoisie.id} />
+                    <button className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm text-red-600 hover:bg-red-50">
+                      Supprimer
+                    </button>
+                  </form>
+                </div>
               </li>
             ))}
           </ul>

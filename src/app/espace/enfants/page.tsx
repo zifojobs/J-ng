@@ -102,12 +102,20 @@ export default async function EnfantsPage() {
                   <h2 className="text-xl font-bold text-gray-900">
                     {enfant.prenom} {enfant.nom}
                   </h2>
-                  <p className="text-sm text-gray-700">
-                    Moyenne :{" "}
-                    <span className="font-semibold">
-                      {moyenneGenerale !== null ? moyenneGenerale.toFixed(2) : "—"}/20
-                    </span>
-                  </p>
+                  <div className="flex items-center gap-3">
+                    <p className="text-sm text-gray-700">
+                      Moyenne :{" "}
+                      <span className="font-semibold">
+                        {moyenneGenerale !== null ? moyenneGenerale.toFixed(2) : "—"}/20
+                      </span>
+                    </p>
+                    <Link
+                      href={`/espace/enfants/${enfant.id}/bulletin`}
+                      className="rounded-lg bg-gray-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-gray-800"
+                    >
+                      Bulletin
+                    </Link>
+                  </div>
                 </div>
 
                 {notesEnfant.length === 0 ? (
