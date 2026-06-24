@@ -60,12 +60,20 @@ export default async function MesNotesPage() {
             {profil.prenom} {profil.nom} — Élève
           </p>
         </div>
-        <Link
-          href="/espace"
-          className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-100"
-        >
-          ← Retour
-        </Link>
+        <div className="flex items-center gap-2">
+          <Link
+            href="/espace/mes-notes/bulletin"
+            className="rounded-lg bg-gray-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-gray-800"
+          >
+            Voir le bulletin
+          </Link>
+          <Link
+            href="/espace"
+            className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-100"
+          >
+            ← Retour
+          </Link>
+        </div>
       </header>
 
       {!notes || notes.length === 0 ? (
