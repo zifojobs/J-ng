@@ -47,6 +47,15 @@ export default async function EspacePage() {
               Mes notes
             </Link>
           </div>
+        ) : profil.role === "parent" ? (
+          <div className="mt-6">
+            <Link
+              href="/espace/enfants"
+              className="inline-block rounded-lg bg-gray-900 px-4 py-2 font-medium text-white hover:bg-gray-800"
+            >
+              Notes de mon enfant
+            </Link>
+          </div>
         ) : (
           <p className="mt-4 text-sm text-gray-500">
             Votre espace sera construit dans les prochaines étapes.
