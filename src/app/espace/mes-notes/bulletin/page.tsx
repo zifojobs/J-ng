@@ -36,7 +36,7 @@ export default async function BulletinPage() {
 
   // Identité : école + classe (avec l'année).
   const [{ data: ecole }, { data: profilClasse }, { data: notes }] = await Promise.all([
-    supabase.from("ecoles").select("nom, adresse, telephone, directeur").single(),
+    supabase.from("ecoles").select("nom, adresse, telephone, directeur, logo_url").single(),
     supabase
       .from("profils")
       .select("classe:classes ( nom, annees_scolaires ( libelle ) )")
@@ -86,6 +86,14 @@ export default async function BulletinPage() {
       <article className="rounded-2xl border border-gray-200 bg-white p-6 sm:p-8 print:rounded-none print:border-0 print:p-0">
         {/* En-tête */}
         <header className="mb-6 border-b border-gray-300 pb-4 text-center">
+          {ecole?.logo_url ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={ecole.logo_url}
+              alt={ecole?.nom ?? "Logo"}
+              className="mx-auto mb-2 h-16 w-auto object-contain"
+            />
+          ) : null}
           <p className="text-lg font-bold text-gray-900">{ecole?.nom ?? "École"}</p>
           {ecole?.adresse ? (
             <p className="mt-0.5 text-xs text-gray-600">{ecole.adresse}</p>

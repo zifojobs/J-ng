@@ -1,13 +1,14 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { requireProfil } from "@/lib/auth";
-import { enregistrerCoordonnees } from "./actions";
+import { enregistrerCoordonnees, enregistrerLogo, supprimerLogo } from "./actions";
 
 type Ecole = {
   nom: string;
   adresse: string | null;
   telephone: string | null;
   directeur: string | null;
+  logo_url: string | null;
 };
 
 export default async function InfosEcolePage({
@@ -27,7 +28,7 @@ export default async function InfosEcolePage({
   // L'admin ne voit QUE son école (grâce à la RLS).
   const { data: ecole } = await supabase
     .from("ecoles")
-    .select("nom, adresse, telephone, directeur")
+    .select("nom, adresse, telephone, directeur, logo_url")
     .single<Ecole>();
 
   return (
@@ -61,6 +62,47 @@ export default async function InfosEcolePage({
       <section className="rounded-2xl border border-gray-200 bg-white p-6">
         <p className="mb-1 text-sm text-gray-500">Votre école</p>
         <p className="mb-6 text-xl font-semibold text-gray-900">{ecole?.nom ?? "—"}</p>
+
+        {/* Logo (facultatif) */}
+        <div className="mb-8 border-b border-gray-200 pb-8">
+          <p className="mb-3 text-sm font-medium text-gray-700">Logo (facultatif)</p>
+          <div className="flex flex-wrap items-center gap-4">
+            {ecole?.logo_url ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={ecole.logo_url}
+                alt="Logo de l'école"
+                className="h-20 w-20 rounded-lg border border-gray-200 object-contain"
+              />
+            ) : (
+              <div className="flex h-20 w-20 items-center justify-center rounded-lg border border-dashed border-gray-300 text-xs text-gray-400">
+                Aucun
+              </div>
+            )}
+
+            <form action={enregistrerLogo} className="flex flex-wrap items-center gap-2">
+              <input
+                type="file"
+                name="logo"
+                accept="image/*"
+                required
+                className="text-sm text-gray-700 file:mr-3 file:rounded-lg file:border-0 file:bg-gray-900 file:px-3 file:py-2 file:text-white hover:file:bg-gray-800"
+              />
+              <button className="rounded-lg bg-gray-900 px-4 py-2 font-medium text-white hover:bg-gray-800">
+                Envoyer
+              </button>
+            </form>
+
+            {ecole?.logo_url ? (
+              <form action={supprimerLogo}>
+                <button className="rounded-lg border border-gray-300 px-3 py-2 text-sm text-red-600 hover:bg-red-50">
+                  Retirer
+                </button>
+              </form>
+            ) : null}
+          </div>
+          <p className="mt-2 text-xs text-gray-500">Image PNG ou JPG, 2 Mo maximum.</p>
+        </div>
 
         <p className="mb-4 text-sm text-gray-500">
           Ces informations apparaîtront en en-tête et en pied du bulletin de l&apos;élève.
