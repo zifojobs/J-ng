@@ -40,6 +40,37 @@ export async function ajouterMatiere(formData: FormData) {
   redirect("/ecole/matieres?succes=" + encodeURIComponent(`Matière « ${nom} » ajoutée.`));
 }
 
+// Modifie le coefficient d'une matière existante.
+export async function modifierCoefficient(formData: FormData) {
+  const { supabase, profil } = await requireProfil();
+  if (profil.role !== "admin_ecole" || !profil.ecole_id) {
+    redirect("/login");
+  }
+
+  const id = String(formData.get("id") ?? "").trim();
+  const coefficient = Number(String(formData.get("coefficient_defaut") ?? "").trim().replace(",", "."));
+
+  if (!id) {
+    redirect("/ecole/matieres?erreur=" + encodeURIComponent("Matière introuvable."));
+  }
+  if (!Number.isFinite(coefficient) || coefficient <= 0) {
+    redirect("/ecole/matieres?erreur=" + encodeURIComponent("Le coefficient doit être un nombre supérieur à 0."));
+  }
+
+  // La RLS garantit qu'on ne modifie qu'une matière de sa propre école.
+  const { error } = await supabase
+    .from("matieres")
+    .update({ coefficient_defaut: coefficient })
+    .eq("id", id);
+
+  if (error) {
+    redirect("/ecole/matieres?erreur=" + encodeURIComponent("Impossible de modifier le coefficient."));
+  }
+
+  revalidatePath("/ecole/matieres");
+  redirect("/ecole/matieres?succes=" + encodeURIComponent("Coefficient mis à jour."));
+}
+
 // Supprime une matière (la RLS garantit qu'on ne touche que sa propre école).
 export async function supprimerMatiere(formData: FormData) {
   const { supabase, profil } = await requireProfil();

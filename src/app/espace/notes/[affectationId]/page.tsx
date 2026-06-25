@@ -19,6 +19,7 @@ type Eleve = {
 type Note = {
   id: string;
   type: string;
+  semestre: number;
   titre: string | null;
   valeur: number;
   coefficient: number;
@@ -70,11 +71,18 @@ export default async function SaisieNotesPage({
   const { data: notes } = await supabase
     .from("notes")
     .select(
-      "id, type, titre, valeur, coefficient, date_evaluation, eleve:profils ( prenom, nom )"
+      "id, type, semestre, titre, valeur, coefficient, date_evaluation, eleve:profils ( prenom, nom )"
     )
     .eq("affectation_id", affectationId)
+    .order("semestre", { ascending: true })
     .order("date_evaluation", { ascending: false })
     .returns<Note[]>();
+
+  // On sépare les notes par semestre pour les afficher en deux groupes.
+  const notesParSemestre = [1, 2].map((s) => ({
+    semestre: s,
+    liste: (notes ?? []).filter((n) => n.semestre === s),
+  }));
 
   const titreAffectation =
     (affectation.matiere?.nom ?? "—") +
@@ -156,6 +164,18 @@ export default async function SaisieNotesPage({
                   <option value="composition">Composition</option>
                 </select>
               </div>
+              <div className="flex flex-1 flex-col gap-1">
+                <label className="text-sm font-medium text-gray-700">Semestre</label>
+                <select
+                  name="semestre"
+                  required
+                  defaultValue="1"
+                  className="rounded-lg border border-gray-300 px-3 py-2 text-gray-900 outline-none focus:border-gray-900"
+                >
+                  <option value="1">1ᵉʳ semestre</option>
+                  <option value="2">2ᵉ semestre</option>
+                </select>
+              </div>
             </div>
 
             <div className="flex flex-col gap-4 sm:flex-row">
@@ -183,15 +203,6 @@ export default async function SaisieNotesPage({
 
             <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
               <div className="flex flex-1 flex-col gap-1">
-                <label className="text-sm font-medium text-gray-700">Coefficient</label>
-                <input
-                  name="coefficient"
-                  inputMode="decimal"
-                  defaultValue="1"
-                  className="rounded-lg border border-gray-300 px-3 py-2 text-gray-900 outline-none focus:border-gray-900"
-                />
-              </div>
-              <div className="flex flex-1 flex-col gap-1">
                 <label className="text-sm font-medium text-gray-700">Date</label>
                 <input
                   name="date_evaluation"
@@ -207,43 +218,53 @@ export default async function SaisieNotesPage({
         </section>
       )}
 
-      {/* Liste des notes saisies */}
-      <section>
-        <h2 className="mb-4 text-lg font-semibold text-gray-900">
+      {/* Liste des notes saisies, regroupées par semestre */}
+      <section className="flex flex-col gap-8">
+        <h2 className="text-lg font-semibold text-gray-900">
           Notes saisies ({notes?.length ?? 0})
         </h2>
-        {notes && notes.length > 0 ? (
-          <ul className="divide-y divide-gray-200 overflow-hidden rounded-2xl border border-gray-200 bg-white">
-            {notes.map((n) => (
-              <li
-                key={n.id}
-                className="flex items-center justify-between gap-3 px-4 py-3"
-              >
-                <div>
-                  <p className="font-medium text-gray-900">
-                    {n.eleve ? `${n.eleve.prenom} ${n.eleve.nom}` : "—"} —{" "}
-                    <span className="text-gray-900">{n.valeur}/20</span>
-                  </p>
-                  <p className="text-sm text-gray-500">
-                    {n.type === "composition" ? "Composition" : "Devoir"}
-                    {n.titre ? ` « ${n.titre} »` : ""} · coef {n.coefficient} ·{" "}
-                    {n.date_evaluation}
-                  </p>
-                </div>
-                <form action={supprimerNote}>
-                  <input type="hidden" name="id" value={n.id} />
-                  <input type="hidden" name="affectation_id" value={affectation.id} />
-                  <button className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm text-red-600 hover:bg-red-50">
-                    Supprimer
-                  </button>
-                </form>
-              </li>
-            ))}
-          </ul>
-        ) : (
+        {!notes || notes.length === 0 ? (
           <p className="text-sm text-gray-500">
             Aucune note pour l&apos;instant. Ajoutez-en une ci-dessus.
           </p>
+        ) : (
+          notesParSemestre.map(({ semestre, liste }) => (
+            <div key={semestre}>
+              <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-gray-500">
+                {semestre === 1 ? "1ᵉʳ semestre" : "2ᵉ semestre"} ({liste.length})
+              </h3>
+              {liste.length === 0 ? (
+                <p className="text-sm text-gray-400">Aucune note.</p>
+              ) : (
+                <ul className="divide-y divide-gray-200 overflow-hidden rounded-2xl border border-gray-200 bg-white">
+                  {liste.map((n) => (
+                    <li
+                      key={n.id}
+                      className="flex items-center justify-between gap-3 px-4 py-3"
+                    >
+                      <div>
+                        <p className="font-medium text-gray-900">
+                          {n.eleve ? `${n.eleve.prenom} ${n.eleve.nom}` : "—"} —{" "}
+                          <span className="text-gray-900">{n.valeur}/20</span>
+                        </p>
+                        <p className="text-sm text-gray-500">
+                          {n.type === "composition" ? "Composition" : "Devoir"}
+                          {n.titre ? ` « ${n.titre} »` : ""} · {n.date_evaluation}
+                        </p>
+                      </div>
+                      <form action={supprimerNote}>
+                        <input type="hidden" name="id" value={n.id} />
+                        <input type="hidden" name="affectation_id" value={affectation.id} />
+                        <button className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm text-red-600 hover:bg-red-50">
+                          Supprimer
+                        </button>
+                      </form>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          ))
         )}
       </section>
     </main>

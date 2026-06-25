@@ -4,8 +4,10 @@ import { Bulletin } from "@/components/Bulletin";
 
 export default async function BulletinEleveAdminPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ semestre?: string }>;
 }) {
   const { supabase, profil } = await requireProfil();
 
@@ -15,6 +17,8 @@ export default async function BulletinEleveAdminPage({
   }
 
   const { id } = await params;
+  const { semestre } = await searchParams;
+  const sem = semestre === "2" ? 2 : 1;
 
   // On vérifie que c'est bien un élève (la RLS le limite déjà à SON école).
   const { data: eleve } = await supabase
@@ -28,5 +32,13 @@ export default async function BulletinEleveAdminPage({
     redirect("/ecole/eleves");
   }
 
-  return <Bulletin supabase={supabase} eleveId={id} retourHref="/ecole/eleves" />;
+  return (
+    <Bulletin
+      supabase={supabase}
+      eleveId={id}
+      retourHref="/ecole/eleves"
+      semestre={sem}
+      bulletinHref={`/ecole/eleves/${id}/bulletin`}
+    />
+  );
 }

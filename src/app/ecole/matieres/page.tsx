@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { requireProfil } from "@/lib/auth";
-import { ajouterMatiere, supprimerMatiere } from "./actions";
+import { ajouterMatiere, modifierCoefficient, supprimerMatiere } from "./actions";
 
 type Matiere = {
   id: string;
@@ -118,20 +118,36 @@ export default async function MatieresPage({
             {matieres.map((m) => (
               <li
                 key={m.id}
-                className="flex items-center justify-between px-4 py-3"
+                className="flex flex-wrap items-center justify-between gap-3 px-4 py-3"
               >
                 <div>
                   <p className="font-medium text-gray-900">{m.nom}</p>
-                  <p className="text-xs text-gray-500">
-                    {m.code ? `${m.code} · ` : ""}coef. {m.coefficient_defaut}
-                  </p>
+                  <p className="text-xs text-gray-500">{m.code ? m.code : "—"}</p>
                 </div>
-                <form action={supprimerMatiere}>
-                  <input type="hidden" name="id" value={m.id} />
-                  <button className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm text-red-600 hover:bg-red-50">
-                    Supprimer
-                  </button>
-                </form>
+                <div className="flex items-center gap-2">
+                  {/* Modifier le coefficient de la matière */}
+                  <form action={modifierCoefficient} className="flex items-center gap-1">
+                    <input type="hidden" name="id" value={m.id} />
+                    <label className="text-sm text-gray-600">Coef.</label>
+                    <input
+                      name="coefficient_defaut"
+                      type="number"
+                      step="0.5"
+                      min="0.5"
+                      defaultValue={m.coefficient_defaut}
+                      className="w-16 rounded-lg border border-gray-300 px-2 py-1 text-sm text-gray-900 outline-none focus:border-gray-900"
+                    />
+                    <button className="rounded-lg border border-gray-300 px-2 py-1 text-sm text-gray-700 hover:bg-gray-100">
+                      Modifier
+                    </button>
+                  </form>
+                  <form action={supprimerMatiere}>
+                    <input type="hidden" name="id" value={m.id} />
+                    <button className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm text-red-600 hover:bg-red-50">
+                      Supprimer
+                    </button>
+                  </form>
+                </div>
               </li>
             ))}
           </ul>

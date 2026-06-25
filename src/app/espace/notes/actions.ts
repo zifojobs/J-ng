@@ -15,9 +15,9 @@ export async function ajouterNote(formData: FormData) {
   const affectationId = String(formData.get("affectation_id") ?? "").trim();
   const eleveId = String(formData.get("eleve_id") ?? "").trim();
   const type = String(formData.get("type") ?? "").trim();
+  const semestre = Number(String(formData.get("semestre") ?? "1").trim());
   const titre = String(formData.get("titre") ?? "").trim();
   const valeurBrute = String(formData.get("valeur") ?? "").trim().replace(",", ".");
-  const coefBrut = String(formData.get("coefficient") ?? "").trim().replace(",", ".");
   const dateEval = String(formData.get("date_evaluation") ?? "").trim();
 
   const base = "/espace/notes/" + affectationId;
@@ -25,15 +25,11 @@ export async function ajouterNote(formData: FormData) {
 
   if (!affectationId || !eleveId) echec("Choisissez un élève.");
   if (type !== "devoir" && type !== "composition") echec("Choisissez le type d'évaluation.");
+  if (semestre !== 1 && semestre !== 2) echec("Choisissez le semestre.");
 
   const valeur = Number(valeurBrute);
   if (!Number.isFinite(valeur) || valeur < 0 || valeur > 20) {
     echec("La note doit être un nombre entre 0 et 20.");
-  }
-
-  const coefficient = coefBrut ? Number(coefBrut) : 1;
-  if (!Number.isFinite(coefficient) || coefficient <= 0) {
-    echec("Le coefficient doit être un nombre supérieur à 0.");
   }
 
   // ecole_id posé côté serveur. La RLS vérifie que l'affectation est bien
@@ -43,9 +39,9 @@ export async function ajouterNote(formData: FormData) {
     affectation_id: affectationId,
     eleve_id: eleveId,
     type,
+    semestre,
     titre: titre || null,
     valeur,
-    coefficient,
     date_evaluation: dateEval || undefined,
   });
 

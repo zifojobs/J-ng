@@ -13,7 +13,7 @@ type Note = {
   valeur: number;
   coefficient: number;
   date_evaluation: string;
-  affectation: { matiere: { nom: string } | null } | null;
+  affectation: { matiere: { nom: string; coefficient_defaut: number } | null } | null;
 };
 
 type EleveProfil = {
@@ -35,12 +35,19 @@ export async function Bulletin({
   supabase,
   eleveId,
   retourHref,
+  semestre,
+  bulletinHref,
 }: {
   supabase: SupabaseClient;
   eleveId: string;
   retourHref: string;
+  // Semestre affiché (1 ou 2) et adresse de cette page de bulletin (pour les
+  // liens du sélecteur de semestre).
+  semestre: 1 | 2;
+  bulletinHref: string;
 }) {
-  // École + identité de l'élève (avec sa classe et l'année) + ses notes.
+  // École + identité de l'élève (avec sa classe et l'année) + ses notes DU
+  // semestre choisi.
   const [{ data: ecole }, { data: eleve }, { data: notes }] = await Promise.all([
     supabase.from("ecoles").select("nom, adresse, telephone, directeur, logo_url").single(),
     supabase
@@ -51,23 +58,46 @@ export async function Bulletin({
     supabase
       .from("notes")
       .select(
-        "id, type, titre, valeur, coefficient, date_evaluation, affectation:affectations ( matiere:matieres ( nom ) )"
+        "id, type, titre, valeur, coefficient, date_evaluation, affectation:affectations ( matiere:matieres ( nom, coefficient_defaut ) )"
       )
       .eq("eleve_id", eleveId)
+      .eq("semestre", semestre)
       .order("date_evaluation", { ascending: false })
       .returns<Note[]>(),
   ]);
 
-  // Regrouper par matière.
-  const parMatiere = new Map<string, Note[]>();
+  const libelleSemestre = semestre === 1 ? "1ᵉʳ semestre" : "2ᵉ semestre";
+
+  // Regrouper les notes par matière (on garde aussi le coefficient de la matière).
+  const parMatiere = new Map<string, { coef: number; notes: Note[] }>();
   for (const n of notes ?? []) {
-    const matiere = n.affectation?.matiere?.nom ?? "Autres";
-    const liste = parMatiere.get(matiere) ?? [];
-    liste.push(n);
-    parMatiere.set(matiere, liste);
+    const nom = n.affectation?.matiere?.nom ?? "Autres";
+    const coef = Number(n.affectation?.matiere?.coefficient_defaut ?? 1);
+    const entree = parMatiere.get(nom) ?? { coef, notes: [] };
+    entree.notes.push(n);
+    parMatiere.set(nom, entree);
   }
-  const matieres = [...parMatiere.entries()].sort((a, b) => a[0].localeCompare(b[0]));
-  const moyenneGenerale = moyenne(notes ?? []);
+
+  // Pour chaque matière : moyenne /20, coefficient, et points = moyenne × coef.
+  const lignes = [...parMatiere.entries()]
+    .sort((a, b) => a[0].localeCompare(b[0]))
+    .map(([nom, { coef, notes: liste }]) => {
+      const moy = moyenne(liste);
+      return {
+        nom,
+        notes: liste,
+        coef,
+        moyenne: moy,
+        points: moy === null ? null : moy * coef,
+      };
+    });
+
+  // Moyenne générale = somme des (moyenne × coef) ÷ somme des coefficients,
+  // en ne comptant que les matières qui ont au moins une note.
+  const lignesNotees = lignes.filter((l) => l.moyenne !== null);
+  const totalCoef = lignesNotees.reduce((s, l) => s + l.coef, 0);
+  const totalPoints = lignesNotees.reduce((s, l) => s + (l.points ?? 0), 0);
+  const moyenneGenerale = totalCoef > 0 ? totalPoints / totalCoef : null;
 
   const classe = eleve?.classe;
   const libelleClasse = classe
@@ -78,13 +108,32 @@ export async function Bulletin({
   return (
     <main className="mx-auto max-w-3xl p-4 sm:p-8 print:p-0">
       {/* Barre d'actions (cachée à l'impression) */}
-      <div className="mb-6 flex items-center justify-between print:hidden">
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-3 print:hidden">
         <Link
           href={retourHref}
           className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-100"
         >
           ← Retour
         </Link>
+
+        {/* Choix du semestre */}
+        <div className="inline-flex overflow-hidden rounded-lg border border-gray-300 text-sm">
+          {([1, 2] as const).map((s) => (
+            <Link
+              key={s}
+              href={`${bulletinHref}?semestre=${s}`}
+              className={
+                "px-3 py-1.5 " +
+                (s === semestre
+                  ? "bg-gray-900 font-medium text-white"
+                  : "bg-white text-gray-700 hover:bg-gray-100")
+              }
+            >
+              {s === 1 ? "1ᵉʳ semestre" : "2ᵉ semestre"}
+            </Link>
+          ))}
+        </div>
+
         <BoutonImprimer />
       </div>
 
@@ -107,7 +156,9 @@ export async function Bulletin({
           {ecole?.telephone ? (
             <p className="text-xs text-gray-600">Tél. {ecole.telephone}</p>
           ) : null}
-          <h1 className="mt-2 text-xl font-bold text-gray-900">Bulletin de notes</h1>
+          <h1 className="mt-2 text-xl font-bold text-gray-900">
+            Bulletin — {libelleSemestre}
+          </h1>
         </header>
 
         {/* Identité de l'élève */}
@@ -129,39 +180,51 @@ export async function Bulletin({
         </section>
 
         {/* Tableau des matières */}
-        {matieres.length === 0 ? (
-          <p className="text-sm text-gray-500">Aucune note pour le moment.</p>
+        {lignes.length === 0 ? (
+          <p className="text-sm text-gray-500">Aucune note pour ce semestre.</p>
         ) : (
           <table className="w-full border-collapse text-sm">
             <thead>
               <tr className="border-y border-gray-300 text-left">
                 <th className="py-2 font-semibold text-gray-700">Matière</th>
                 <th className="py-2 text-center font-semibold text-gray-700">Détail des notes</th>
-                <th className="py-2 text-right font-semibold text-gray-700">Moyenne /20</th>
+                <th className="py-2 text-right font-semibold text-gray-700">Moy. /20</th>
+                <th className="py-2 text-center font-semibold text-gray-700">Coef</th>
+                <th className="py-2 text-right font-semibold text-gray-700">Moy. × Coef</th>
               </tr>
             </thead>
             <tbody>
-              {matieres.map(([matiere, listeNotes]) => {
-                const moy = moyenne(listeNotes);
-                return (
-                  <tr key={matiere} className="border-b border-gray-200 align-top">
-                    <td className="py-2 font-medium text-gray-900">{matiere}</td>
-                    <td className="py-2 text-center text-gray-600">
-                      {listeNotes
-                        .map((n) => `${n.valeur}${n.coefficient !== 1 ? ` (×${n.coefficient})` : ""}`)
-                        .join(" · ")}
-                    </td>
-                    <td className="py-2 text-right font-semibold text-gray-900">
-                      {moy !== null ? moy.toFixed(2) : "—"}
-                    </td>
-                  </tr>
-                );
-              })}
+              {lignes.map((l) => (
+                <tr key={l.nom} className="border-b border-gray-200 align-top">
+                  <td className="py-2 font-medium text-gray-900">{l.nom}</td>
+                  <td className="py-2 text-center text-gray-600">
+                    {l.notes.map((n) => `${n.valeur}`).join(" · ")}
+                  </td>
+                  <td className="py-2 text-right font-semibold text-gray-900">
+                    {l.moyenne !== null ? l.moyenne.toFixed(2) : "—"}
+                  </td>
+                  <td className="py-2 text-center text-gray-700">{l.coef}</td>
+                  <td className="py-2 text-right font-semibold text-gray-900">
+                    {l.points !== null ? `${l.points.toFixed(2)} / ${20 * l.coef}` : "—"}
+                  </td>
+                </tr>
+              ))}
             </tbody>
             <tfoot>
+              {/* Totaux : somme des points sur le maximum possible. */}
               <tr className="border-t-2 border-gray-400">
-                <td className="py-2 font-bold text-gray-900" colSpan={2}>
-                  Moyenne générale
+                <td className="py-2 font-semibold text-gray-900" colSpan={3}>
+                  Total
+                </td>
+                <td className="py-2 text-center font-semibold text-gray-900">{totalCoef}</td>
+                <td className="py-2 text-right font-semibold text-gray-900">
+                  {totalPoints.toFixed(2)} / {20 * totalCoef}
+                </td>
+              </tr>
+              {/* Moyenne générale = total des points ÷ total des coefficients. */}
+              <tr>
+                <td className="py-2 text-lg font-bold text-gray-900" colSpan={4}>
+                  Moyenne générale /20
                 </td>
                 <td className="py-2 text-right text-lg font-bold text-gray-900">
                   {moyenneGenerale !== null ? moyenneGenerale.toFixed(2) : "—"}

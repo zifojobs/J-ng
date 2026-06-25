@@ -14,25 +14,32 @@ type Note = {
   coefficient: number;
   date_evaluation: string;
   eleve_id: string;
-  affectation: { matiere: { nom: string } | null } | null;
+  affectation: { matiere: { nom: string; coefficient_defaut: number } | null } | null;
 };
 
-// Moyenne pondérée par les coefficients (ou null si aucune note).
+// Moyenne /20 d'une matière (moyenne simple des notes ; le coefficient de la
+// matière sert seulement à la moyenne générale).
 function moyenne(notes: Note[]): number | null {
   if (notes.length === 0) return null;
-  const sommeCoef = notes.reduce((s, n) => s + Number(n.coefficient), 0);
-  if (sommeCoef === 0) return null;
-  const sommePoints = notes.reduce((s, n) => s + Number(n.valeur) * Number(n.coefficient), 0);
-  return sommePoints / sommeCoef;
+  const somme = notes.reduce((s, n) => s + Number(n.valeur), 0);
+  return somme / notes.length;
 }
 
-export default async function EnfantsPage() {
+export default async function EnfantsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ semestre?: string }>;
+}) {
   const { supabase, profil } = await requireProfil();
 
   // Réservé aux parents.
   if (profil.role !== "parent") {
     redirect("/");
   }
+
+  const { semestre } = await searchParams;
+  const sem = semestre === "2" ? 2 : 1;
+  const libelleSemestre = sem === 1 ? "1ᵉʳ semestre" : "2ᵉ semestre";
 
   // Les enfants rattachés à ce parent (RLS = ses propres liens).
   const { data: liens } = await supabase
@@ -45,12 +52,13 @@ export default async function EnfantsPage() {
     .map((l) => l.eleve)
     .filter((e): e is NonNullable<Lien["eleve"]> => e !== null);
 
-  // Toutes les notes des enfants (la RLS ne laisse passer que celles-ci).
+  // Toutes les notes du semestre choisi (la RLS ne laisse passer que celles des enfants).
   const { data: notes } = await supabase
     .from("notes")
     .select(
-      "id, type, titre, valeur, coefficient, date_evaluation, eleve_id, affectation:affectations ( matiere:matieres ( nom ) )"
+      "id, type, titre, valeur, coefficient, date_evaluation, eleve_id, affectation:affectations ( matiere:matieres ( nom, coefficient_defaut ) )"
     )
+    .eq("semestre", sem)
     .order("date_evaluation", { ascending: false })
     .returns<Note[]>();
 
@@ -74,6 +82,24 @@ export default async function EnfantsPage() {
         </Link>
       </header>
 
+      {/* Choix du semestre */}
+      <div className="mb-8 inline-flex overflow-hidden rounded-lg border border-gray-300 text-sm">
+        {([1, 2] as const).map((s) => (
+          <Link
+            key={s}
+            href={`/espace/enfants?semestre=${s}`}
+            className={
+              "px-3 py-1.5 " +
+              (s === sem
+                ? "bg-gray-900 font-medium text-white"
+                : "bg-white text-gray-700 hover:bg-gray-100")
+            }
+          >
+            {s === 1 ? "1ᵉʳ semestre" : "2ᵉ semestre"}
+          </Link>
+        ))}
+      </div>
+
       {enfants.length === 0 ? (
         <p className="rounded-lg bg-amber-50 px-4 py-3 text-sm text-amber-800">
           Aucun enfant n&apos;est rattaché à votre compte. Contactez l&apos;école.
@@ -83,18 +109,28 @@ export default async function EnfantsPage() {
           {enfants.map((enfant) => {
             const notesEnfant = notesParEnfant(enfant.id);
 
-            // Regrouper par matière.
-            const parMatiere = new Map<string, Note[]>();
+            // Regrouper par matière (en gardant le coefficient de chaque matière).
+            const parMatiere = new Map<string, { coef: number; notes: Note[] }>();
             for (const n of notesEnfant) {
-              const matiere = n.affectation?.matiere?.nom ?? "Autres";
-              const liste = parMatiere.get(matiere) ?? [];
-              liste.push(n);
-              parMatiere.set(matiere, liste);
+              const nom = n.affectation?.matiere?.nom ?? "Autres";
+              const coef = Number(n.affectation?.matiere?.coefficient_defaut ?? 1);
+              const entree = parMatiere.get(nom) ?? { coef, notes: [] };
+              entree.notes.push(n);
+              parMatiere.set(nom, entree);
             }
-            const matieres = [...parMatiere.entries()].sort((a, b) =>
-              a[0].localeCompare(b[0])
-            );
-            const moyenneGenerale = moyenne(notesEnfant);
+            const lignes = [...parMatiere.entries()]
+              .sort((a, b) => a[0].localeCompare(b[0]))
+              .map(([nom, { coef, notes: liste }]) => ({
+                nom,
+                coef,
+                notes: liste,
+                moyenne: moyenne(liste),
+              }));
+
+            const notees = lignes.filter((l) => l.moyenne !== null);
+            const totalCoef = notees.reduce((s, l) => s + l.coef, 0);
+            const totalPoints = notees.reduce((s, l) => s + (l.moyenne ?? 0) * l.coef, 0);
+            const moyenneGenerale = totalCoef > 0 ? totalPoints / totalCoef : null;
 
             return (
               <section key={enfant.id}>
@@ -110,7 +146,7 @@ export default async function EnfantsPage() {
                       </span>
                     </p>
                     <Link
-                      href={`/espace/enfants/${enfant.id}/bulletin`}
+                      href={`/espace/enfants/${enfant.id}/bulletin?semestre=${sem}`}
                       className="rounded-lg bg-gray-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-gray-800"
                     >
                       Bulletin
@@ -120,50 +156,48 @@ export default async function EnfantsPage() {
 
                 {notesEnfant.length === 0 ? (
                   <p className="rounded-lg bg-gray-50 px-4 py-3 text-sm text-gray-500">
-                    Pas encore de notes.
+                    Pas de notes pour le {libelleSemestre}.
                   </p>
                 ) : (
                   <div className="flex flex-col gap-4">
-                    {matieres.map(([matiere, listeNotes]) => {
-                      const moy = moyenne(listeNotes);
-                      return (
-                        <div
-                          key={matiere}
-                          className="overflow-hidden rounded-2xl border border-gray-200 bg-white"
-                        >
-                          <div className="flex items-center justify-between border-b border-gray-200 px-4 py-3">
-                            <h3 className="font-semibold text-gray-900">{matiere}</h3>
-                            <p className="text-sm font-medium text-gray-700">
-                              Moyenne : {moy !== null ? moy.toFixed(2) : "—"}/20
-                            </p>
-                          </div>
-                          <ul className="divide-y divide-gray-200">
-                            {listeNotes.map((n) => (
-                              <li
-                                key={n.id}
-                                className="flex items-center justify-between gap-3 px-4 py-3"
-                              >
-                                <div>
-                                  <p className="font-medium text-gray-900">
-                                    {n.type === "composition" ? "Composition" : "Devoir"}
-                                    {n.titre ? ` « ${n.titre} »` : ""}
-                                  </p>
-                                  <p className="text-sm text-gray-500">
-                                    coef {n.coefficient} · {n.date_evaluation}
-                                  </p>
-                                </div>
-                                <p className="text-lg font-bold text-gray-900">
-                                  {n.valeur}
-                                  <span className="text-sm font-normal text-gray-500">
-                                    /20
-                                  </span>
-                                </p>
-                              </li>
-                            ))}
-                          </ul>
+                    {lignes.map((l) => (
+                      <div
+                        key={l.nom}
+                        className="overflow-hidden rounded-2xl border border-gray-200 bg-white"
+                      >
+                        <div className="flex items-center justify-between border-b border-gray-200 px-4 py-3">
+                          <h3 className="font-semibold text-gray-900">
+                            {l.nom}{" "}
+                            <span className="text-sm font-normal text-gray-500">
+                              (coef {l.coef})
+                            </span>
+                          </h3>
+                          <p className="text-sm font-medium text-gray-700">
+                            Moyenne : {l.moyenne !== null ? l.moyenne.toFixed(2) : "—"}/20
+                          </p>
                         </div>
-                      );
-                    })}
+                        <ul className="divide-y divide-gray-200">
+                          {l.notes.map((n) => (
+                            <li
+                              key={n.id}
+                              className="flex items-center justify-between gap-3 px-4 py-3"
+                            >
+                              <div>
+                                <p className="font-medium text-gray-900">
+                                  {n.type === "composition" ? "Composition" : "Devoir"}
+                                  {n.titre ? ` « ${n.titre} »` : ""}
+                                </p>
+                                <p className="text-sm text-gray-500">{n.date_evaluation}</p>
+                              </div>
+                              <p className="text-lg font-bold text-gray-900">
+                                {n.valeur}
+                                <span className="text-sm font-normal text-gray-500">/20</span>
+                              </p>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
                   </div>
                 )}
               </section>
