@@ -146,6 +146,12 @@ export default async function EnfantsPage({
                       </span>
                     </p>
                     <Link
+                      href={`/espace/enfants/${enfant.id}/emploi-du-temps`}
+                      className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-100"
+                    >
+                      Emploi du temps
+                    </Link>
+                    <Link
                       href={`/espace/enfants/${enfant.id}/bulletin?semestre=${sem}`}
                       className="rounded-lg bg-gray-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-gray-800"
                     >

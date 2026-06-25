@@ -30,21 +30,33 @@ export default async function EspacePage() {
           <span className="font-semibold text-gray-900">{roleLisible}</span>.
         </p>
         {profil.role === "professeur" ? (
-          <div className="mt-6">
+          <div className="mt-6 flex flex-wrap gap-3">
             <Link
               href="/espace/notes"
               className="inline-block rounded-lg bg-gray-900 px-4 py-2 font-medium text-white hover:bg-gray-800"
             >
               Saisir des notes
             </Link>
+            <Link
+              href="/espace/emploi-du-temps"
+              className="inline-block rounded-lg bg-gray-900 px-4 py-2 font-medium text-white hover:bg-gray-800"
+            >
+              Mon emploi du temps
+            </Link>
           </div>
         ) : profil.role === "eleve" ? (
-          <div className="mt-6">
+          <div className="mt-6 flex flex-wrap gap-3">
             <Link
               href="/espace/mes-notes"
               className="inline-block rounded-lg bg-gray-900 px-4 py-2 font-medium text-white hover:bg-gray-800"
             >
               Mes notes
+            </Link>
+            <Link
+              href="/espace/emploi-du-temps"
+              className="inline-block rounded-lg bg-gray-900 px-4 py-2 font-medium text-white hover:bg-gray-800"
+            >
+              Mon emploi du temps
             </Link>
           </div>
         ) : profil.role === "parent" ? (

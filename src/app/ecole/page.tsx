@@ -87,6 +87,12 @@ export default async function EcolePage() {
           >
             Gérer les parents
           </Link>
+          <Link
+            href="/ecole/emploi-du-temps"
+            className="inline-block rounded-lg bg-gray-900 px-4 py-2 font-medium text-white hover:bg-gray-800"
+          >
+            Emploi du temps
+          </Link>
         </div>
       </section>
     </main>
