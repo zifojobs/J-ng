@@ -53,6 +53,7 @@ export async function Bulletin({
   retourHref,
   semestre,
   bulletinHref,
+  enLot = false,
 }: {
   supabase: SupabaseClient;
   eleveId: string;
@@ -61,6 +62,10 @@ export async function Bulletin({
   // liens du sélecteur de semestre).
   semestre: 1 | 2;
   bulletinHref: string;
+  // Mode « en lot » : utilisé quand on affiche plusieurs bulletins à la suite
+  // (toute une classe). On cache la barre d'actions individuelle et on force un
+  // saut de page à l'impression après chaque bulletin.
+  enLot?: boolean;
 }) {
   // École + identité de l'élève (avec sa classe et l'année) + ses notes DU
   // semestre choisi.
@@ -153,37 +158,47 @@ export async function Bulletin({
     : "—";
   const dateEdition = new Date().toLocaleDateString("fr-FR");
 
+  const Conteneur = enLot ? "section" : "main";
+
   return (
-    <main className="mx-auto max-w-3xl p-4 sm:p-8 print:p-0">
-      {/* Barre d'actions (cachée à l'impression) */}
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-3 print:hidden">
-        <Link
-          href={retourHref}
-          className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-100"
-        >
-          ← Retour
-        </Link>
+    <Conteneur
+      className={
+        enLot
+          ? "mx-auto max-w-3xl p-4 sm:p-8 print:p-0 print:break-after-page"
+          : "mx-auto max-w-3xl p-4 sm:p-8 print:p-0"
+      }
+    >
+      {/* Barre d'actions (cachée à l'impression, et absente en mode lot) */}
+      {enLot ? null : (
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-3 print:hidden">
+          <Link
+            href={retourHref}
+            className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-100"
+          >
+            ← Retour
+          </Link>
 
-        {/* Choix du semestre */}
-        <div className="inline-flex overflow-hidden rounded-lg border border-gray-300 text-sm">
-          {([1, 2] as const).map((s) => (
-            <Link
-              key={s}
-              href={`${bulletinHref}?semestre=${s}`}
-              className={
-                "px-3 py-1.5 " +
-                (s === semestre
-                  ? "bg-gray-900 font-medium text-white"
-                  : "bg-white text-gray-700 hover:bg-gray-100")
-              }
-            >
-              {s === 1 ? "1ᵉʳ semestre" : "2ᵉ semestre"}
-            </Link>
-          ))}
+          {/* Choix du semestre */}
+          <div className="inline-flex overflow-hidden rounded-lg border border-gray-300 text-sm">
+            {([1, 2] as const).map((s) => (
+              <Link
+                key={s}
+                href={`${bulletinHref}?semestre=${s}`}
+                className={
+                  "px-3 py-1.5 " +
+                  (s === semestre
+                    ? "bg-gray-900 font-medium text-white"
+                    : "bg-white text-gray-700 hover:bg-gray-100")
+                }
+              >
+                {s === 1 ? "1ᵉʳ semestre" : "2ᵉ semestre"}
+              </Link>
+            ))}
+          </div>
+
+          <BoutonImprimer />
         </div>
-
-        <BoutonImprimer />
-      </div>
+      )}
 
       {/* Le bulletin imprimable */}
       <article className="rounded-2xl border border-gray-200 bg-white p-6 sm:p-8 print:rounded-none print:border-0 print:p-0">
@@ -344,6 +359,6 @@ export async function Bulletin({
           <span>Document généré le {dateEdition}</span>
         </footer>
       </article>
-    </main>
+    </Conteneur>
   );
 }

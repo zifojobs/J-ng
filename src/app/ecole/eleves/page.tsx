@@ -105,7 +105,15 @@ export default async function ElevesPage({
 
       {/* Choix de la classe */}
       <section className="mb-8 rounded-2xl border border-gray-200 bg-white p-6">
-        <h2 className="mb-3 text-lg font-semibold text-gray-900">Classe</h2>
+        <div className="mb-3 flex items-center justify-between gap-3">
+          <h2 className="text-lg font-semibold text-gray-900">Classe</h2>
+          <Link
+            href={`/ecole/eleves/bulletins?classe=${classeChoisie.id}`}
+            className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-100"
+          >
+            Bulletins de la classe
+          </Link>
+        </div>
         <div className="flex flex-wrap gap-2">
           {classes.map((c) => (
             <Link
