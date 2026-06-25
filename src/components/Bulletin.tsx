@@ -31,6 +31,16 @@ function moyenne(notes: Note[]): number | null {
   return sommePoints / sommeCoef;
 }
 
+// Appréciation générale automatique selon la moyenne générale /20.
+function mention(moy: number | null): string {
+  if (moy === null) return "—";
+  if (moy >= 16) return "Excellent — Félicitations";
+  if (moy >= 14) return "Très bien";
+  if (moy >= 12) return "Bien";
+  if (moy >= 10) return "Assez bien";
+  return "Insuffisant";
+}
+
 export async function Bulletin({
   supabase,
   eleveId,
@@ -98,6 +108,24 @@ export async function Bulletin({
   const totalCoef = lignesNotees.reduce((s, l) => s + l.coef, 0);
   const totalPoints = lignesNotees.reduce((s, l) => s + (l.points ?? 0), 0);
   const moyenneGenerale = totalCoef > 0 ? totalPoints / totalCoef : null;
+
+  // Rang dans la classe + moyennes de la classe (calculés par la fonction SQL
+  // sécurisée : elle ne renvoie que des chiffres agrégés, jamais les notes des
+  // autres élèves).
+  const { data: stats } = await supabase
+    .rpc("stats_classe_eleve", { p_eleve_id: eleveId, p_semestre: semestre })
+    .maybeSingle<{
+      rang: number | null;
+      effectif: number | null;
+      moyenne_classe: number | null;
+      moyenne_max: number | null;
+      moyenne_min: number | null;
+    }>();
+
+  const rangTexte =
+    stats?.rang != null && stats?.effectif != null
+      ? `${stats.rang === 1 ? "1ᵉʳ" : `${stats.rang}ᵉ`} sur ${stats.effectif}`
+      : null;
 
   const classe = eleve?.classe;
   const libelleClasse = classe
@@ -177,6 +205,12 @@ export async function Bulletin({
             <span className="text-gray-500">Édité le : </span>
             <span className="font-medium text-gray-900">{dateEdition}</span>
           </p>
+          {rangTexte ? (
+            <p className="text-gray-700 sm:text-right">
+              <span className="text-gray-500">Rang : </span>
+              <span className="font-medium text-gray-900">{rangTexte}</span>
+            </p>
+          ) : null}
         </section>
 
         {/* Tableau des matières */}
@@ -233,6 +267,27 @@ export async function Bulletin({
             </tfoot>
           </table>
         )}
+
+        {/* Stats de la classe + appréciation générale */}
+        {lignes.length > 0 ? (
+          <section className="mt-6 space-y-1 rounded-lg bg-gray-50 px-4 py-3 text-sm print:bg-transparent print:px-0">
+            {stats?.moyenne_classe != null ? (
+              <p className="text-gray-700">
+                <span className="text-gray-500">Moyenne de la classe : </span>
+                <span className="font-medium text-gray-900">{stats.moyenne_classe}</span>
+                {stats.moyenne_max != null && stats.moyenne_min != null ? (
+                  <span className="text-gray-500">
+                    {" "}· plus forte {stats.moyenne_max} · plus faible {stats.moyenne_min}
+                  </span>
+                ) : null}
+              </p>
+            ) : null}
+            <p>
+              <span className="text-gray-500">Appréciation générale : </span>
+              <span className="font-semibold text-gray-900">{mention(moyenneGenerale)}</span>
+            </p>
+          </section>
+        ) : null}
 
         {/* Zone de signature / cachet du responsable (à droite, classique) */}
         <section className="mt-10 flex justify-end">
