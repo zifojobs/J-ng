@@ -53,6 +53,59 @@ export async function ajouterNote(formData: FormData) {
   redirect(base + "?succes=" + encodeURIComponent("Note enregistrée."));
 }
 
+// Enregistre (ou efface) l'appréciation d'un élève pour une matière + semestre.
+// Texte vide = on retire l'appréciation existante ; sinon on crée/met à jour.
+export async function enregistrerAppreciation(formData: FormData) {
+  const { supabase, profil } = await requireProfil();
+  if (profil.role !== "professeur" || !profil.ecole_id) {
+    redirect("/login");
+  }
+
+  const affectationId = String(formData.get("affectation_id") ?? "").trim();
+  const eleveId = String(formData.get("eleve_id") ?? "").trim();
+  const semestre = Number(String(formData.get("semestre") ?? "1").trim());
+  const texte = String(formData.get("texte") ?? "").trim();
+
+  const base = "/espace/notes/" + affectationId;
+  const retour = (params: string) => redirect(base + "?app_semestre=" + semestre + "&" + params);
+  const echec = (msg: string) => retour("erreur=" + encodeURIComponent(msg));
+
+  if (!affectationId || !eleveId) echec("Élève introuvable.");
+  if (semestre !== 1 && semestre !== 2) echec("Choisissez le semestre.");
+  if (texte.length > 500) echec("L'appréciation est trop longue (500 caractères max).");
+
+  // Texte vide : on supprime l'appréciation si elle existait.
+  if (!texte) {
+    const { error } = await supabase
+      .from("appreciations")
+      .delete()
+      .eq("affectation_id", affectationId)
+      .eq("eleve_id", eleveId)
+      .eq("semestre", semestre);
+    if (error) echec("Impossible d'effacer l'appréciation.");
+    revalidatePath(base);
+    retour("succes=" + encodeURIComponent("Appréciation effacée."));
+  }
+
+  // ecole_id posé côté serveur. La RLS vérifie que l'affectation est bien
+  // celle de ce prof. onConflict = la contrainte d'unicité (une par trio).
+  const { error } = await supabase.from("appreciations").upsert(
+    {
+      ecole_id: profil.ecole_id,
+      affectation_id: affectationId,
+      eleve_id: eleveId,
+      semestre,
+      texte,
+    },
+    { onConflict: "affectation_id,eleve_id,semestre" }
+  );
+
+  if (error) echec("Impossible d'enregistrer l'appréciation.");
+
+  revalidatePath(base);
+  retour("succes=" + encodeURIComponent("Appréciation enregistrée."));
+}
+
 // Supprime une note (la RLS garantit que seul le prof de l'affectation le peut).
 export async function supprimerNote(formData: FormData) {
   const { supabase, profil } = await requireProfil();

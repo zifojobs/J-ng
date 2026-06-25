@@ -1,3 +1,4 @@
+import React from "react";
 import Link from "next/link";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { BoutonImprimer } from "@/components/BoutonImprimer";
@@ -20,6 +21,11 @@ type EleveProfil = {
   prenom: string;
   nom: string;
   classe: { nom: string; annees_scolaires: { libelle: string } | null } | null;
+};
+
+type Appreciation = {
+  texte: string;
+  affectation: { matiere: { nom: string } | null } | null;
 };
 
 // Moyenne pondérée par les coefficients (ou null si aucune note).
@@ -58,23 +64,37 @@ export async function Bulletin({
 }) {
   // École + identité de l'élève (avec sa classe et l'année) + ses notes DU
   // semestre choisi.
-  const [{ data: ecole }, { data: eleve }, { data: notes }] = await Promise.all([
-    supabase.from("ecoles").select("nom, adresse, telephone, directeur, logo_url").single(),
-    supabase
-      .from("profils")
-      .select("prenom, nom, classe:classes ( nom, annees_scolaires ( libelle ) )")
-      .eq("id", eleveId)
-      .single<EleveProfil>(),
-    supabase
-      .from("notes")
-      .select(
-        "id, type, titre, valeur, coefficient, date_evaluation, affectation:affectations ( matiere:matieres ( nom, coefficient_defaut ) )"
-      )
-      .eq("eleve_id", eleveId)
-      .eq("semestre", semestre)
-      .order("date_evaluation", { ascending: false })
-      .returns<Note[]>(),
-  ]);
+  const [{ data: ecole }, { data: eleve }, { data: notes }, { data: appreciations }] =
+    await Promise.all([
+      supabase.from("ecoles").select("nom, adresse, telephone, directeur, logo_url").single(),
+      supabase
+        .from("profils")
+        .select("prenom, nom, classe:classes ( nom, annees_scolaires ( libelle ) )")
+        .eq("id", eleveId)
+        .single<EleveProfil>(),
+      supabase
+        .from("notes")
+        .select(
+          "id, type, titre, valeur, coefficient, date_evaluation, affectation:affectations ( matiere:matieres ( nom, coefficient_defaut ) )"
+        )
+        .eq("eleve_id", eleveId)
+        .eq("semestre", semestre)
+        .order("date_evaluation", { ascending: false })
+        .returns<Note[]>(),
+      supabase
+        .from("appreciations")
+        .select("texte, affectation:affectations ( matiere:matieres ( nom ) )")
+        .eq("eleve_id", eleveId)
+        .eq("semestre", semestre)
+        .returns<Appreciation[]>(),
+    ]);
+
+  // Appréciation par matière (clé = nom de la matière, comme pour les notes).
+  const apprParMatiere = new Map<string, string>();
+  for (const a of appreciations ?? []) {
+    const nom = a.affectation?.matiere?.nom;
+    if (nom && a.texte) apprParMatiere.set(nom, a.texte);
+  }
 
   const libelleSemestre = semestre === 1 ? "1ᵉʳ semestre" : "2ᵉ semestre";
 
@@ -228,21 +248,40 @@ export async function Bulletin({
               </tr>
             </thead>
             <tbody>
-              {lignes.map((l) => (
-                <tr key={l.nom} className="border-b border-gray-200 align-top">
-                  <td className="py-2 font-medium text-gray-900">{l.nom}</td>
-                  <td className="py-2 text-center text-gray-600">
-                    {l.notes.map((n) => `${n.valeur}`).join(" · ")}
-                  </td>
-                  <td className="py-2 text-right font-semibold text-gray-900">
-                    {l.moyenne !== null ? l.moyenne.toFixed(2) : "—"}
-                  </td>
-                  <td className="py-2 text-center text-gray-700">{l.coef}</td>
-                  <td className="py-2 text-right font-semibold text-gray-900">
-                    {l.points !== null ? `${l.points.toFixed(2)} / ${20 * l.coef}` : "—"}
-                  </td>
-                </tr>
-              ))}
+              {lignes.map((l) => {
+                const appr = apprParMatiere.get(l.nom);
+                return (
+                  <React.Fragment key={l.nom}>
+                    <tr
+                      className={
+                        "align-top " + (appr ? "" : "border-b border-gray-200")
+                      }
+                    >
+                      <td className="py-2 font-medium text-gray-900">{l.nom}</td>
+                      <td className="py-2 text-center text-gray-600">
+                        {l.notes.map((n) => `${n.valeur}`).join(" · ")}
+                      </td>
+                      <td className="py-2 text-right font-semibold text-gray-900">
+                        {l.moyenne !== null ? l.moyenne.toFixed(2) : "—"}
+                      </td>
+                      <td className="py-2 text-center text-gray-700">{l.coef}</td>
+                      <td className="py-2 text-right font-semibold text-gray-900">
+                        {l.points !== null ? `${l.points.toFixed(2)} / ${20 * l.coef}` : "—"}
+                      </td>
+                    </tr>
+                    {appr ? (
+                      <tr className="border-b border-gray-200">
+                        <td
+                          colSpan={5}
+                          className="pb-2 pl-4 text-sm italic text-gray-600"
+                        >
+                          « {appr} »
+                        </td>
+                      </tr>
+                    ) : null}
+                  </React.Fragment>
+                );
+              })}
             </tbody>
             <tfoot>
               {/* Totaux : somme des points sur le maximum possible. */}

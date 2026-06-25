@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { requireProfil } from "@/lib/auth";
-import { ajouterNote, supprimerNote } from "../actions";
+import { ajouterNote, supprimerNote, enregistrerAppreciation } from "../actions";
 
 type Affectation = {
   id: string;
@@ -27,12 +27,18 @@ type Note = {
   eleve: { prenom: string; nom: string } | null;
 };
 
+type Appreciation = {
+  eleve_id: string;
+  semestre: number;
+  texte: string;
+};
+
 export default async function SaisieNotesPage({
   params,
   searchParams,
 }: {
   params: Promise<{ affectationId: string }>;
-  searchParams: Promise<{ erreur?: string; succes?: string }>;
+  searchParams: Promise<{ erreur?: string; succes?: string; app_semestre?: string }>;
 }) {
   const { supabase, profil } = await requireProfil();
 
@@ -42,7 +48,10 @@ export default async function SaisieNotesPage({
   }
 
   const { affectationId } = await params;
-  const { erreur, succes } = await searchParams;
+  const { erreur, succes, app_semestre } = await searchParams;
+
+  // Semestre choisi pour la saisie des appréciations (1 par défaut).
+  const semestreAppreciation = app_semestre === "2" ? 2 : 1;
 
   // L'affectation doit appartenir à CE prof (sinon : pas le droit d'y saisir).
   const { data: affectation } = await supabase
@@ -83,6 +92,19 @@ export default async function SaisieNotesPage({
     semestre: s,
     liste: (notes ?? []).filter((n) => n.semestre === s),
   }));
+
+  // Appréciations déjà saisies pour cette affectation.
+  const { data: appreciations } = await supabase
+    .from("appreciations")
+    .select("eleve_id, semestre, texte")
+    .eq("affectation_id", affectationId)
+    .returns<Appreciation[]>();
+
+  // Accès rapide au texte d'un élève pour le semestre choisi.
+  const texteAppreciation = (eleveId: string) =>
+    (appreciations ?? []).find(
+      (a) => a.eleve_id === eleveId && a.semestre === semestreAppreciation
+    )?.texte ?? "";
 
   const titreAffectation =
     (affectation.matiere?.nom ?? "—") +
@@ -267,6 +289,63 @@ export default async function SaisieNotesPage({
           ))
         )}
       </section>
+
+      {/* Appréciations : un commentaire par élève, pour le semestre choisi */}
+      {eleves && eleves.length > 0 ? (
+        <section className="mt-10">
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+            <h2 className="text-lg font-semibold text-gray-900">Appréciations</h2>
+            {/* Choix du semestre commenté */}
+            <div className="inline-flex overflow-hidden rounded-lg border border-gray-300 text-sm">
+              {([1, 2] as const).map((s) => (
+                <Link
+                  key={s}
+                  href={`/espace/notes/${affectation.id}?app_semestre=${s}`}
+                  className={
+                    "px-3 py-1.5 " +
+                    (s === semestreAppreciation
+                      ? "bg-gray-900 font-medium text-white"
+                      : "bg-white text-gray-700 hover:bg-gray-100")
+                  }
+                >
+                  {s === 1 ? "1ᵉʳ semestre" : "2ᵉ semestre"}
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          <ul className="flex flex-col gap-4">
+            {eleves.map((e) => (
+              <li
+                key={e.id}
+                className="rounded-2xl border border-gray-200 bg-white p-4"
+              >
+                <form action={enregistrerAppreciation} className="flex flex-col gap-2">
+                  <input type="hidden" name="affectation_id" value={affectation.id} />
+                  <input type="hidden" name="eleve_id" value={e.id} />
+                  <input type="hidden" name="semestre" value={semestreAppreciation} />
+                  <label className="text-sm font-medium text-gray-900">
+                    {e.prenom} {e.nom}
+                  </label>
+                  <textarea
+                    name="texte"
+                    rows={2}
+                    maxLength={500}
+                    defaultValue={texteAppreciation(e.id)}
+                    placeholder="Appréciation pour ce semestre (facultatif)…"
+                    className="rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 outline-none focus:border-gray-900"
+                  />
+                  <div className="flex justify-end">
+                    <button className="rounded-lg bg-gray-900 px-4 py-1.5 text-sm font-medium text-white hover:bg-gray-800">
+                      Enregistrer
+                    </button>
+                  </div>
+                </form>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
     </main>
   );
 }
