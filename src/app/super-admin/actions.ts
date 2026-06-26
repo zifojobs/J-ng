@@ -140,6 +140,38 @@ export async function creerEcoleDepuisDemande(formData: FormData) {
   );
 }
 
+// Change le statut (abonnement) d'une école : essai / actif / suspendu.
+// Réservé au super-admin ; le verrou en base (migration 0021) l'impose aussi.
+export async function changerStatutEcole(formData: FormData) {
+  const { supabase, profil } = await requireProfil();
+  if (profil.role !== "super_admin") {
+    redirect("/login");
+  }
+
+  const ecoleId = String(formData.get("ecole_id") ?? "").trim();
+  const statut = String(formData.get("statut") ?? "").trim();
+
+  // On n'accepte que les trois valeurs prévues par le type en base.
+  if (!ecoleId || !["essai", "actif", "suspendu"].includes(statut)) {
+    redirect("/super-admin?erreur=" + encodeURIComponent("Statut invalide."));
+  }
+
+  const { error } = await supabase
+    .from("ecoles")
+    .update({ statut })
+    .eq("id", ecoleId);
+
+  if (error) {
+    redirect(
+      "/super-admin?erreur=" +
+        encodeURIComponent("Impossible de changer le statut.")
+    );
+  }
+
+  revalidatePath("/super-admin");
+  redirect("/super-admin?succes=" + encodeURIComponent("Statut mis à jour."));
+}
+
 // Rejette une demande d'inscription (sans créer d'école).
 export async function rejeterDemande(formData: FormData) {
   const { supabase, profil } = await requireProfil();

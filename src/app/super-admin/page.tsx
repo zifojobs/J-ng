@@ -5,6 +5,7 @@ import {
   creerEcoleEtAdmin,
   creerEcoleDepuisDemande,
   rejeterDemande,
+  changerStatutEcole,
 } from "./actions";
 
 type Demande = {
@@ -268,15 +269,32 @@ export default async function SuperAdminPage({
             {ecoles.map((e) => (
               <li
                 key={e.id}
-                className="flex items-center justify-between px-4 py-3"
+                className="flex flex-wrap items-center justify-between gap-3 px-4 py-3"
               >
                 <div>
                   <p className="font-medium text-gray-900">{e.nom}</p>
                   <p className="text-xs text-gray-500">{e.slug}</p>
                 </div>
-                <span className="rounded-full bg-gray-100 px-2.5 py-0.5 text-xs text-gray-600">
-                  {e.statut}
-                </span>
+
+                {/* Statut d'abonnement : essai / actif / suspendu. */}
+                <form
+                  action={changerStatutEcole}
+                  className="flex items-center gap-2"
+                >
+                  <input type="hidden" name="ecole_id" value={e.id} />
+                  <select
+                    name="statut"
+                    defaultValue={e.statut}
+                    className="rounded-lg border border-gray-300 px-2.5 py-1 text-xs text-gray-900 outline-none focus:border-gray-900"
+                  >
+                    <option value="essai">essai</option>
+                    <option value="actif">actif</option>
+                    <option value="suspendu">suspendu</option>
+                  </select>
+                  <button className="rounded-lg border border-gray-300 px-3 py-1 text-xs font-medium text-gray-700 hover:bg-gray-100">
+                    Appliquer
+                  </button>
+                </form>
               </li>
             ))}
           </ul>
