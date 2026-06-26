@@ -38,6 +38,12 @@ export default async function EspacePage() {
               Saisir des notes
             </Link>
             <Link
+              href="/espace/devoirs"
+              className="inline-block rounded-lg bg-gray-900 px-4 py-2 font-medium text-white hover:bg-gray-800"
+            >
+              Donner un devoir
+            </Link>
+            <Link
               href="/espace/emploi-du-temps"
               className="inline-block rounded-lg bg-gray-900 px-4 py-2 font-medium text-white hover:bg-gray-800"
             >
@@ -51,6 +57,12 @@ export default async function EspacePage() {
               className="inline-block rounded-lg bg-gray-900 px-4 py-2 font-medium text-white hover:bg-gray-800"
             >
               Mes notes
+            </Link>
+            <Link
+              href="/espace/mes-devoirs"
+              className="inline-block rounded-lg bg-gray-900 px-4 py-2 font-medium text-white hover:bg-gray-800"
+            >
+              Mes devoirs
             </Link>
             <Link
               href="/espace/emploi-du-temps"
