@@ -40,6 +40,12 @@ export default async function EcolePage() {
         </p>
         <div className="mt-6 flex flex-wrap gap-3">
           <Link
+            href="/ecole/tableau-de-bord"
+            className="inline-block rounded-lg bg-gray-900 px-4 py-2 font-medium text-white hover:bg-gray-800"
+          >
+            Tableau de bord
+          </Link>
+          <Link
             href="/ecole/infos"
             className="inline-block rounded-lg bg-gray-900 px-4 py-2 font-medium text-white hover:bg-gray-800"
           >
