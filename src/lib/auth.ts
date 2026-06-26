@@ -36,8 +36,8 @@ export async function requireProfil(options?: { ignorerSuspension?: boolean }) {
     redirect("/login");
   }
 
-  // Robinet d'abonnement : une école suspendue ne donne plus accès à ses
-  // utilisateurs. Le super-admin (sans école) n'est jamais bloqué.
+  // Robinet d'abonnement : on bloque si l'école est suspendue (manuel) OU si sa
+  // date d'échéance est dépassée (automatique). Le super-admin n'est jamais bloqué.
   if (
     !options?.ignorerSuspension &&
     profil.role !== "super_admin" &&
@@ -45,11 +45,16 @@ export async function requireProfil(options?: { ignorerSuspension?: boolean }) {
   ) {
     const { data: ecole } = await supabase
       .from("ecoles")
-      .select("statut")
+      .select("statut, date_echeance")
       .eq("id", profil.ecole_id)
-      .single<{ statut: string }>();
+      .single<{ statut: string; date_echeance: string | null }>();
 
-    if (ecole?.statut === "suspendu") {
+    // "fr-CA" donne AAAA-MM-JJ, directement comparable à une date stockée.
+    const aujourdhui = new Date().toLocaleDateString("fr-CA");
+    const echeanceDepassee =
+      !!ecole?.date_echeance && ecole.date_echeance < aujourdhui;
+
+    if (ecole?.statut === "suspendu" || echeanceDepassee) {
       redirect("/suspendu");
     }
   }

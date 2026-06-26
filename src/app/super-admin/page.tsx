@@ -6,6 +6,7 @@ import {
   creerEcoleDepuisDemande,
   rejeterDemande,
   changerStatutEcole,
+  prolongerAbonnement,
 } from "./actions";
 
 type Demande = {
@@ -34,10 +35,13 @@ export default async function SuperAdminPage({
 
   const { erreur, succes } = await searchParams;
 
+  // Pour repérer les échéances dépassées (AAAA-MM-JJ comparable aux dates en base).
+  const aujourdhui = new Date().toLocaleDateString("fr-CA");
+
   // Le super-admin voit TOUTES les écoles (grâce à la RLS).
   const { data: ecoles } = await supabase
     .from("ecoles")
-    .select("id, nom, slug, statut, created_at")
+    .select("id, nom, slug, statut, date_echeance, created_at")
     .order("created_at", { ascending: false });
 
   // Les demandes d'inscription en attente (formulaire public).
@@ -276,25 +280,72 @@ export default async function SuperAdminPage({
                   <p className="text-xs text-gray-500">{e.slug}</p>
                 </div>
 
-                {/* Statut d'abonnement : essai / actif / suspendu. */}
-                <form
-                  action={changerStatutEcole}
-                  className="flex items-center gap-2"
-                >
-                  <input type="hidden" name="ecole_id" value={e.id} />
-                  <select
-                    name="statut"
-                    defaultValue={e.statut}
-                    className="rounded-lg border border-gray-300 px-2.5 py-1 text-xs text-gray-900 outline-none focus:border-gray-900"
+                <div className="flex flex-col items-end gap-2">
+                  {/* Statut d'abonnement : essai / actif / suspendu. */}
+                  <form
+                    action={changerStatutEcole}
+                    className="flex items-center gap-2"
                   >
-                    <option value="essai">essai</option>
-                    <option value="actif">actif</option>
-                    <option value="suspendu">suspendu</option>
-                  </select>
-                  <button className="rounded-lg border border-gray-300 px-3 py-1 text-xs font-medium text-gray-700 hover:bg-gray-100">
-                    Appliquer
-                  </button>
-                </form>
+                    <input type="hidden" name="ecole_id" value={e.id} />
+                    <select
+                      name="statut"
+                      defaultValue={e.statut}
+                      className="rounded-lg border border-gray-300 px-2.5 py-1 text-xs text-gray-900 outline-none focus:border-gray-900"
+                    >
+                      <option value="essai">essai</option>
+                      <option value="actif">actif</option>
+                      <option value="suspendu">suspendu</option>
+                    </select>
+                    <button className="rounded-lg border border-gray-300 px-3 py-1 text-xs font-medium text-gray-700 hover:bg-gray-100">
+                      Appliquer
+                    </button>
+                  </form>
+
+                  {/* Échéance + enregistrer un paiement (prolonge l'abonnement). */}
+                  <p className="text-xs text-gray-500">
+                    Échéance :{" "}
+                    {e.date_echeance ? (
+                      <span
+                        className={
+                          e.date_echeance < aujourdhui
+                            ? "font-medium text-red-600"
+                            : "font-medium text-gray-700"
+                        }
+                      >
+                        {new Date(e.date_echeance).toLocaleDateString("fr-FR")}
+                        {e.date_echeance < aujourdhui ? " (dépassée)" : ""}
+                      </span>
+                    ) : (
+                      "—"
+                    )}
+                  </p>
+                  <form
+                    action={prolongerAbonnement}
+                    className="flex items-center gap-2"
+                  >
+                    <input type="hidden" name="ecole_id" value={e.id} />
+                    <input
+                      name="montant_fcfa"
+                      type="number"
+                      min={0}
+                      placeholder="FCFA"
+                      className="w-20 rounded-lg border border-gray-300 px-2 py-1 text-xs text-gray-900 outline-none focus:border-gray-900"
+                    />
+                    <select
+                      name="mois"
+                      defaultValue="12"
+                      className="rounded-lg border border-gray-300 px-2 py-1 text-xs text-gray-900 outline-none focus:border-gray-900"
+                    >
+                      <option value="1">+1 mois</option>
+                      <option value="3">+3 mois</option>
+                      <option value="6">+6 mois</option>
+                      <option value="12">+12 mois</option>
+                    </select>
+                    <button className="rounded-lg bg-gray-900 px-3 py-1 text-xs font-medium text-white hover:bg-gray-800">
+                      Enregistrer paiement
+                    </button>
+                  </form>
+                </div>
               </li>
             ))}
           </ul>

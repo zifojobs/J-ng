@@ -172,6 +172,86 @@ export async function changerStatutEcole(formData: FormData) {
   redirect("/super-admin?succes=" + encodeURIComponent("Statut mis à jour."));
 }
 
+// Formate une date en chaîne AAAA-MM-JJ (format attendu par une colonne `date`).
+function dateISO(d: Date): string {
+  return d.toLocaleDateString("fr-CA"); // ex. "2026-06-26"
+}
+
+// Enregistre un paiement = prolonge l'abonnement d'une école de N mois et
+// réactive l'accès. Réservé au super-admin (le verrou en base l'impose aussi).
+export async function prolongerAbonnement(formData: FormData) {
+  const { supabase, profil } = await requireProfil();
+  if (profil.role !== "super_admin") {
+    redirect("/login");
+  }
+
+  const ecoleId = String(formData.get("ecole_id") ?? "").trim();
+  const mois = parseInt(String(formData.get("mois") ?? ""), 10);
+  const montant = parseInt(String(formData.get("montant_fcfa") ?? "0"), 10) || 0;
+
+  if (!ecoleId || !Number.isFinite(mois) || mois < 1 || mois > 36) {
+    redirect(
+      "/super-admin?erreur=" +
+        encodeURIComponent("Durée invalide (1 à 36 mois).")
+    );
+  }
+
+  // Échéance actuelle : on prolonge à partir de la plus tardive entre
+  // « aujourd'hui » et l'échéance déjà en cours (on ne perd pas de jours payés).
+  const { data: ecole } = await supabase
+    .from("ecoles")
+    .select("date_echeance")
+    .eq("id", ecoleId)
+    .single<{ date_echeance: string | null }>();
+
+  const aujourdhui = new Date();
+  const echeanceActuelle = ecole?.date_echeance
+    ? new Date(ecole.date_echeance)
+    : null;
+  const base =
+    echeanceActuelle && echeanceActuelle > aujourdhui
+      ? echeanceActuelle
+      : aujourdhui;
+
+  const fin = new Date(base);
+  fin.setMonth(fin.getMonth() + mois);
+
+  // 1) Historiser le paiement.
+  const { error: erreurAbo } = await supabase.from("abonnements").insert({
+    ecole_id: ecoleId,
+    date_debut: dateISO(aujourdhui),
+    date_fin: dateISO(fin),
+    montant_fcfa: montant,
+    cree_par: profil.id,
+  });
+
+  if (erreurAbo) {
+    redirect(
+      "/super-admin?erreur=" +
+        encodeURIComponent("Impossible d'enregistrer le paiement.")
+    );
+  }
+
+  // 2) Mettre à jour l'échéance de l'école + réactiver l'accès.
+  const { error: erreurEcole } = await supabase
+    .from("ecoles")
+    .update({ date_echeance: dateISO(fin), statut: "actif" })
+    .eq("id", ecoleId);
+
+  if (erreurEcole) {
+    redirect(
+      "/super-admin?erreur=" +
+        encodeURIComponent("Paiement enregistré mais échéance non mise à jour.")
+    );
+  }
+
+  revalidatePath("/super-admin");
+  redirect(
+    "/super-admin?succes=" +
+      encodeURIComponent(`Abonnement prolongé jusqu'au ${dateISO(fin)}.`)
+  );
+}
+
 // Rejette une demande d'inscription (sans créer d'école).
 export async function rejeterDemande(formData: FormData) {
   const { supabase, profil } = await requireProfil();
