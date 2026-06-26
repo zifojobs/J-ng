@@ -93,6 +93,12 @@ export default async function EcolePage() {
           >
             Emploi du temps
           </Link>
+          <Link
+            href="/messages"
+            className="inline-block rounded-lg bg-gray-900 px-4 py-2 font-medium text-white hover:bg-gray-800"
+          >
+            Messagerie
+          </Link>
         </div>
       </section>
     </main>

@@ -55,6 +55,12 @@ export default async function EspacePage() {
             >
               Mon emploi du temps
             </Link>
+            <Link
+              href="/messages"
+              className="inline-block rounded-lg bg-gray-900 px-4 py-2 font-medium text-white hover:bg-gray-800"
+            >
+              Messages
+            </Link>
           </div>
         ) : profil.role === "eleve" ? (
           <div className="mt-6 flex flex-wrap gap-3">
@@ -82,14 +88,26 @@ export default async function EspacePage() {
             >
               Mon emploi du temps
             </Link>
+            <Link
+              href="/messages"
+              className="inline-block rounded-lg bg-gray-900 px-4 py-2 font-medium text-white hover:bg-gray-800"
+            >
+              Messages
+            </Link>
           </div>
         ) : profil.role === "parent" ? (
-          <div className="mt-6">
+          <div className="mt-6 flex flex-wrap gap-3">
             <Link
               href="/espace/enfants"
               className="inline-block rounded-lg bg-gray-900 px-4 py-2 font-medium text-white hover:bg-gray-800"
             >
               Notes de mon enfant
+            </Link>
+            <Link
+              href="/messages"
+              className="inline-block rounded-lg bg-gray-900 px-4 py-2 font-medium text-white hover:bg-gray-800"
+            >
+              Messages
             </Link>
           </div>
         ) : (
