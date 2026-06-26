@@ -77,6 +77,13 @@ export default async function LoginPage({
             Se connecter
           </button>
         </form>
+
+        <p className="mt-6 border-t border-gray-100 pt-4 text-center text-sm text-gray-500">
+          Vous dirigez une école ?{" "}
+          <a href="/inscription" className="font-medium text-gray-900 hover:underline">
+            Inscrire mon école
+          </a>
+        </p>
       </div>
     </main>
   );

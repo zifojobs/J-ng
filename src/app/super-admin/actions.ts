@@ -4,6 +4,9 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { requireProfil } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
+import type { createClient } from "@/lib/supabase/server";
+
+type Supabase = Awaited<ReturnType<typeof createClient>>;
 
 // Transforme "Collège Jàng de Dakar" -> "college-jang-de-dakar".
 function slugify(texte: string): string {
@@ -15,21 +18,16 @@ function slugify(texte: string): string {
     .replace(/^-+|-+$/g, ""); // enlève les tirets au début/fin
 }
 
-export async function creerEcoleEtAdmin(formData: FormData) {
-  // Sécurité : seul le super-admin peut créer une école.
-  const { supabase, profil } = await requireProfil();
-  if (profil.role !== "super_admin") {
-    redirect("/login");
-  }
+// Crée une école + son compte admin. Renvoie un message d'erreur (ou null si OK).
+// Annule tout en cas d'échec partiel (pas de demi-création).
+async function creerEcoleAdmin(
+  supabase: Supabase,
+  params: { nomEcole: string; prenom: string; nom: string; email: string; password: string }
+): Promise<string | null> {
+  const { nomEcole, prenom, nom, email, password } = params;
 
-  const nomEcole = String(formData.get("nom_ecole") ?? "").trim();
-  const adminPrenom = String(formData.get("admin_prenom") ?? "").trim();
-  const adminNom = String(formData.get("admin_nom") ?? "").trim();
-  const adminEmail = String(formData.get("admin_email") ?? "").trim().toLowerCase();
-  const adminPassword = String(formData.get("admin_password") ?? "");
-
-  if (!nomEcole || !adminEmail || adminPassword.length < 6) {
-    redirect("/super-admin?erreur=" + encodeURIComponent("Champs manquants ou mot de passe trop court (min. 6 caractères)."));
+  if (!nomEcole || !email || password.length < 6) {
+    return "Champs manquants ou mot de passe trop court (min. 6 caractères).";
   }
 
   const slug = slugify(nomEcole);
@@ -42,21 +40,20 @@ export async function creerEcoleEtAdmin(formData: FormData) {
     .single();
 
   if (erreurEcole || !ecole) {
-    redirect("/super-admin?erreur=" + encodeURIComponent("Impossible de créer l'école (nom déjà utilisé ?)."));
+    return "Impossible de créer l'école (nom déjà utilisé ?).";
   }
 
   // 2) Créer le compte de l'admin (côté serveur, email confirmé directement).
   const admin = createAdminClient();
   const { data: userCree, error: erreurUser } = await admin.auth.admin.createUser({
-    email: adminEmail,
-    password: adminPassword,
+    email,
+    password,
     email_confirm: true,
   });
 
   if (erreurUser || !userCree?.user) {
-    // On annule l'école créée pour ne pas laisser de demi-création.
     await supabase.from("ecoles").delete().eq("id", ecole.id);
-    redirect("/super-admin?erreur=" + encodeURIComponent("Impossible de créer l'admin (email déjà utilisé ?)."));
+    return "Impossible de créer l'admin (email déjà utilisé ?).";
   }
 
   // 3) Créer le profil de l'admin, rattaché à son école.
@@ -64,17 +61,100 @@ export async function creerEcoleEtAdmin(formData: FormData) {
     id: userCree.user.id,
     ecole_id: ecole.id,
     role: "admin_ecole",
-    prenom: adminPrenom,
-    nom: adminNom,
-    email: adminEmail,
+    prenom,
+    nom,
+    email,
   });
 
   if (erreurProfil) {
     await admin.auth.admin.deleteUser(userCree.user.id);
     await supabase.from("ecoles").delete().eq("id", ecole.id);
-    redirect("/super-admin?erreur=" + encodeURIComponent("Erreur lors de la création du profil admin."));
+    return "Erreur lors de la création du profil admin.";
+  }
+
+  return null;
+}
+
+// Création « à la main » par le super-admin (formulaire libre).
+export async function creerEcoleEtAdmin(formData: FormData) {
+  const { supabase, profil } = await requireProfil();
+  if (profil.role !== "super_admin") {
+    redirect("/login");
+  }
+
+  const nomEcole = String(formData.get("nom_ecole") ?? "").trim();
+  const erreur = await creerEcoleAdmin(supabase, {
+    nomEcole,
+    prenom: String(formData.get("admin_prenom") ?? "").trim(),
+    nom: String(formData.get("admin_nom") ?? "").trim(),
+    email: String(formData.get("admin_email") ?? "").trim().toLowerCase(),
+    password: String(formData.get("admin_password") ?? ""),
+  });
+
+  if (erreur) {
+    redirect("/super-admin?erreur=" + encodeURIComponent(erreur));
   }
 
   revalidatePath("/super-admin");
-  redirect("/super-admin?succes=" + encodeURIComponent(`École « ${nomEcole} » créée avec son administrateur.`));
+  redirect(
+    "/super-admin?succes=" +
+      encodeURIComponent(`École « ${nomEcole} » créée avec son administrateur.`)
+  );
+}
+
+// Création depuis une demande d'inscription : crée l'école + admin, puis marque
+// la demande comme traitée.
+export async function creerEcoleDepuisDemande(formData: FormData) {
+  const { supabase, profil } = await requireProfil();
+  if (profil.role !== "super_admin") {
+    redirect("/login");
+  }
+
+  const demandeId = String(formData.get("demande_id") ?? "").trim();
+  const nomEcole = String(formData.get("nom_ecole") ?? "").trim();
+
+  const erreur = await creerEcoleAdmin(supabase, {
+    nomEcole,
+    prenom: String(formData.get("admin_prenom") ?? "").trim(),
+    nom: String(formData.get("admin_nom") ?? "").trim(),
+    email: String(formData.get("admin_email") ?? "").trim().toLowerCase(),
+    password: String(formData.get("admin_password") ?? ""),
+  });
+
+  if (erreur) {
+    redirect("/super-admin?erreur=" + encodeURIComponent(erreur));
+  }
+
+  // L'école est créée : on marque la demande comme traitée.
+  if (demandeId) {
+    await supabase
+      .from("demandes_inscription")
+      .update({ statut: "traitee" })
+      .eq("id", demandeId);
+  }
+
+  revalidatePath("/super-admin");
+  redirect(
+    "/super-admin?succes=" +
+      encodeURIComponent(`École « ${nomEcole} » créée à partir de la demande.`)
+  );
+}
+
+// Rejette une demande d'inscription (sans créer d'école).
+export async function rejeterDemande(formData: FormData) {
+  const { supabase, profil } = await requireProfil();
+  if (profil.role !== "super_admin") {
+    redirect("/login");
+  }
+
+  const demandeId = String(formData.get("demande_id") ?? "").trim();
+  if (demandeId) {
+    await supabase
+      .from("demandes_inscription")
+      .update({ statut: "rejetee" })
+      .eq("id", demandeId);
+  }
+
+  revalidatePath("/super-admin");
+  redirect("/super-admin?succes=" + encodeURIComponent("Demande rejetée."));
 }
