@@ -3,6 +3,22 @@ import { redirect } from "next/navigation";
 import { requireProfil } from "@/lib/auth";
 import { logout } from "@/app/login/actions";
 
+// Lien de navigation présenté sous forme de carte (icône + libellé).
+type LienAdmin = { href: string; libelle: string; icone: string };
+
+const LIENS_ADMIN: LienAdmin[] = [
+  { href: "/ecole/infos", libelle: "Coordonnées", icone: "🏫" },
+  { href: "/ecole/annees", libelle: "Années scolaires", icone: "📆" },
+  { href: "/ecole/classes", libelle: "Classes", icone: "🏛️" },
+  { href: "/ecole/matieres", libelle: "Matières", icone: "📚" },
+  { href: "/ecole/professeurs", libelle: "Professeurs", icone: "👨‍🏫" },
+  { href: "/ecole/eleves", libelle: "Élèves", icone: "🎓" },
+  { href: "/ecole/affectations", libelle: "Affectations", icone: "🔗" },
+  { href: "/ecole/parents", libelle: "Parents", icone: "👪" },
+  { href: "/ecole/emploi-du-temps", libelle: "Emploi du temps", icone: "🕐" },
+  { href: "/messages", libelle: "Messagerie", icone: "💬" },
+];
+
 export default async function EcolePage() {
   const { supabase, profil } = await requireProfil();
 
@@ -55,137 +71,123 @@ export default async function EcolePage() {
   const nbFaites = etapes.filter((e) => e.fait).length;
   const toutPret = nbFaites === etapes.length;
 
+  const initiales = `${profil.prenom?.[0] ?? ""}${profil.nom?.[0] ?? ""}`.toUpperCase();
+
   return (
-    <main className="mx-auto max-w-3xl p-4 sm:p-8">
-      <header className="mb-8 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Espace école</h1>
-          <p className="text-sm text-gray-500">
-            {profil.prenom} {profil.nom} — Administrateur
-          </p>
-        </div>
-        <form action={logout}>
-          <button className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-100">
-            Se déconnecter
-          </button>
-        </form>
-      </header>
-
-      {/* Checklist de démarrage : visible tant que tout n'est pas configuré */}
-      {!toutPret ? (
-        <section className="mb-8 rounded-2xl border border-gray-200 bg-white p-6">
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-gray-900">Premiers pas</h2>
-            <span className="text-sm font-medium text-gray-500">
-              {nbFaites}/{etapes.length}
-            </span>
+    <main className="min-h-screen bg-slate-900 px-4 py-8 sm:px-8">
+      <div className="mx-auto max-w-3xl">
+        {/* En-tête */}
+        <header className="mb-8 flex items-start justify-between">
+          <div>
+            <p className="text-sm text-slate-400">Administration</p>
+            <h1 className="mt-1 text-2xl font-bold text-white">{ecole?.nom ?? "—"}</h1>
+            <p className="mt-1 text-sm text-slate-500">
+              {profil.prenom} {profil.nom}
+            </p>
           </div>
-          <ul className="flex flex-col gap-2">
-            {etapes.map((e) => (
-              <li key={e.href}>
-                <Link
-                  href={e.href}
-                  className="flex items-center gap-3 rounded-lg px-2 py-1.5 hover:bg-gray-50"
-                >
-                  <span
-                    className={
-                      "flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-sm " +
-                      (e.fait
-                        ? "bg-green-100 text-green-700"
-                        : "border border-gray-300 text-transparent")
-                    }
-                  >
-                    ✓
-                  </span>
-                  <span
-                    className={
-                      "text-sm " +
-                      (e.fait ? "text-gray-400 line-through" : "font-medium text-gray-900")
-                    }
-                  >
-                    {e.titre}
-                  </span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </section>
-      ) : null}
+          <div className="flex flex-col items-end gap-2">
+            <div className="flex h-11 w-11 items-center justify-center rounded-full bg-green-500 font-bold text-slate-900">
+              {initiales}
+            </div>
+            <form action={logout}>
+              <button className="text-xs text-slate-400 transition hover:text-slate-200">
+                Se déconnecter
+              </button>
+            </form>
+          </div>
+        </header>
 
-      <section className="rounded-2xl border border-gray-200 bg-white p-6">
-        <p className="text-sm text-gray-500">Votre école</p>
-        <p className="mt-1 text-xl font-semibold text-gray-900">
-          {ecole?.nom ?? "—"}
-        </p>
-        <div className="mt-6 flex flex-wrap gap-3">
-          <Link
-            href="/ecole/tableau-de-bord"
-            className="inline-block rounded-lg bg-gray-900 px-4 py-2 font-medium text-white hover:bg-gray-800"
-          >
-            Tableau de bord
-          </Link>
-          <Link
-            href="/ecole/infos"
-            className="inline-block rounded-lg bg-gray-900 px-4 py-2 font-medium text-white hover:bg-gray-800"
-          >
-            Coordonnées de l&apos;école
-          </Link>
-          <Link
-            href="/ecole/matieres"
-            className="inline-block rounded-lg bg-gray-900 px-4 py-2 font-medium text-white hover:bg-gray-800"
-          >
-            Gérer les matières
-          </Link>
-          <Link
-            href="/ecole/annees"
-            className="inline-block rounded-lg bg-gray-900 px-4 py-2 font-medium text-white hover:bg-gray-800"
-          >
-            Gérer les années scolaires
-          </Link>
-          <Link
-            href="/ecole/classes"
-            className="inline-block rounded-lg bg-gray-900 px-4 py-2 font-medium text-white hover:bg-gray-800"
-          >
-            Gérer les classes
-          </Link>
-          <Link
-            href="/ecole/professeurs"
-            className="inline-block rounded-lg bg-gray-900 px-4 py-2 font-medium text-white hover:bg-gray-800"
-          >
-            Gérer les professeurs
-          </Link>
-          <Link
-            href="/ecole/eleves"
-            className="inline-block rounded-lg bg-gray-900 px-4 py-2 font-medium text-white hover:bg-gray-800"
-          >
-            Gérer les élèves
-          </Link>
-          <Link
-            href="/ecole/affectations"
-            className="inline-block rounded-lg bg-gray-900 px-4 py-2 font-medium text-white hover:bg-gray-800"
-          >
-            Gérer les affectations
-          </Link>
-          <Link
-            href="/ecole/parents"
-            className="inline-block rounded-lg bg-gray-900 px-4 py-2 font-medium text-white hover:bg-gray-800"
-          >
-            Gérer les parents
-          </Link>
-          <Link
-            href="/ecole/emploi-du-temps"
-            className="inline-block rounded-lg bg-gray-900 px-4 py-2 font-medium text-white hover:bg-gray-800"
-          >
-            Emploi du temps
-          </Link>
-          <Link
-            href="/messages"
-            className="inline-block rounded-lg bg-gray-900 px-4 py-2 font-medium text-white hover:bg-gray-800"
-          >
-            Messagerie
-          </Link>
+        {/* Cartes KPI : effectifs */}
+        <div className="mb-4 grid grid-cols-3 gap-3">
+          <div className="rounded-2xl border border-slate-800 bg-slate-800/30 p-5">
+            <p className="text-sm text-slate-400">Élèves</p>
+            <p className="mt-1 text-3xl font-bold text-white">{eleves.count ?? 0}</p>
+          </div>
+          <div className="rounded-2xl border border-slate-800 bg-slate-800/30 p-5">
+            <p className="text-sm text-slate-400">Classes</p>
+            <p className="mt-1 text-3xl font-bold text-white">{classes.count ?? 0}</p>
+          </div>
+          <div className="rounded-2xl border border-slate-800 bg-slate-800/30 p-5">
+            <p className="text-sm text-slate-400">Profs</p>
+            <p className="mt-1 text-3xl font-bold text-white">{profs.count ?? 0}</p>
+          </div>
         </div>
-      </section>
+
+        {/* Accès mis en avant : le tableau de bord détaillé (présence, moyennes, activité) */}
+        <Link
+          href="/ecole/tableau-de-bord"
+          className="mb-6 flex items-center justify-between rounded-2xl bg-green-500 p-5 shadow-lg shadow-green-500/20 transition hover:bg-green-400"
+        >
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-wide text-green-900/80">
+              Pilotage
+            </p>
+            <p className="mt-1 text-lg font-bold text-slate-900">
+              Tableau de bord 📈
+            </p>
+            <p className="text-sm text-slate-900/80">
+              Présence, moyennes par classe, activité récente
+            </p>
+          </div>
+          <span className="text-2xl text-slate-900">→</span>
+        </Link>
+
+        {/* Checklist de démarrage : visible tant que tout n'est pas configuré */}
+        {!toutPret ? (
+          <section className="mb-6 rounded-2xl border border-slate-800 bg-slate-800/30 p-6">
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-white">Premiers pas</h2>
+              <span className="text-sm font-medium text-slate-400">
+                {nbFaites}/{etapes.length}
+              </span>
+            </div>
+            <ul className="flex flex-col gap-1">
+              {etapes.map((e) => (
+                <li key={e.href}>
+                  <Link
+                    href={e.href}
+                    className="flex items-center gap-3 rounded-lg px-2 py-1.5 transition hover:bg-slate-800/60"
+                  >
+                    <span
+                      className={
+                        "flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-sm " +
+                        (e.fait
+                          ? "bg-green-500 text-slate-900"
+                          : "border border-slate-600 text-transparent")
+                      }
+                    >
+                      ✓
+                    </span>
+                    <span
+                      className={
+                        "text-sm " +
+                        (e.fait ? "text-slate-500 line-through" : "font-medium text-white")
+                      }
+                    >
+                      {e.titre}
+                    </span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ) : null}
+
+        {/* Grille de navigation (cartes) */}
+        <h2 className="mb-3 text-sm font-semibold text-slate-300">Gérer mon école</h2>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+          {LIENS_ADMIN.map((lien) => (
+            <Link
+              key={lien.href}
+              href={lien.href}
+              className="flex flex-col items-start gap-3 rounded-2xl border border-slate-800 bg-slate-800/30 p-5 transition hover:border-green-500/40 hover:bg-slate-800/60"
+            >
+              <span className="text-2xl">{lien.icone}</span>
+              <span className="font-medium text-white">{lien.libelle}</span>
+            </Link>
+          ))}
+        </div>
+      </div>
     </main>
   );
 }
