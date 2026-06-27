@@ -20,22 +20,22 @@ function dateLisible(iso: string | null): string {
 
 function Carte({ d }: { d: DevoirAffiche }) {
   return (
-    <li className="rounded-2xl border border-gray-200 bg-white p-4">
+    <li className="rounded-2xl border border-slate-800 bg-slate-800/30 p-4">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="font-medium text-gray-900">{d.titre}</p>
-          <p className="text-sm text-gray-500">
+          <p className="font-medium text-white">{d.titre}</p>
+          <p className="text-sm text-slate-400">
             {d.matiere} · {d.professeur}
           </p>
         </div>
         {d.date_pour_le ? (
-          <span className="shrink-0 rounded-lg bg-gray-100 px-2.5 py-1 text-sm font-medium text-gray-700">
+          <span className="shrink-0 rounded-lg bg-slate-700 px-2.5 py-1 text-sm font-medium text-slate-200">
             {dateLisible(d.date_pour_le)}
           </span>
         ) : null}
       </div>
       {d.consigne ? (
-        <p className="mt-2 whitespace-pre-wrap text-sm text-gray-700">{d.consigne}</p>
+        <p className="mt-2 whitespace-pre-wrap text-sm text-slate-300">{d.consigne}</p>
       ) : null}
     </li>
   );
@@ -44,7 +44,7 @@ function Carte({ d }: { d: DevoirAffiche }) {
 export function ListeDevoirs({ devoirs }: { devoirs: DevoirAffiche[] }) {
   if (devoirs.length === 0) {
     return (
-      <p className="rounded-lg bg-gray-50 px-4 py-3 text-sm text-gray-500">
+      <p className="rounded-2xl border border-slate-800 bg-slate-800/30 px-4 py-3 text-sm text-slate-400">
         Aucun devoir pour le moment.
       </p>
     );
@@ -64,11 +64,11 @@ export function ListeDevoirs({ devoirs }: { devoirs: DevoirAffiche[] }) {
   return (
     <div className="flex flex-col gap-8">
       <section>
-        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-gray-500">
+        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-400">
           À venir ({aVenir.length})
         </h2>
         {aVenir.length === 0 ? (
-          <p className="text-sm text-gray-400">Aucun devoir à venir.</p>
+          <p className="text-sm text-slate-500">Aucun devoir à venir.</p>
         ) : (
           <ul className="flex flex-col gap-3">
             {aVenir.map((d) => (
@@ -80,7 +80,7 @@ export function ListeDevoirs({ devoirs }: { devoirs: DevoirAffiche[] }) {
 
       {passes.length > 0 ? (
         <section>
-          <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-gray-500">
+          <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-400">
             Passés ({passes.length})
           </h2>
           <ul className="flex flex-col gap-3">

@@ -79,34 +79,36 @@ export default async function AbsencesEnfantPage({
   }));
 
   return (
-    <main className="mx-auto max-w-3xl p-4 sm:p-8">
-      <header className="mb-8 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Absences</h1>
-          <p className="text-sm text-gray-500">
-            {enfant?.prenom} {enfant?.nom}
+    <main className="min-h-screen bg-slate-900 px-4 py-8 sm:px-8">
+      <div className="mx-auto max-w-3xl">
+        <header className="mb-8 flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-white">Absences</h1>
+            <p className="text-sm text-slate-400">
+              {enfant?.prenom} {enfant?.nom}
+            </p>
+          </div>
+          <Link
+            href="/espace/enfants"
+            className="rounded-xl border border-slate-700 px-3 py-1.5 text-sm text-slate-300 transition hover:bg-slate-800"
+          >
+            ← Retour
+          </Link>
+        </header>
+
+        {succes ? (
+          <p className="mb-4 rounded-xl border border-green-500/20 bg-green-500/10 px-3 py-2 text-sm text-green-300">
+            {succes}
           </p>
-        </div>
-        <Link
-          href="/espace/enfants"
-          className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-100"
-        >
-          ← Retour
-        </Link>
-      </header>
+        ) : null}
+        {erreur ? (
+          <p className="mb-4 rounded-xl border border-red-500/20 bg-red-500/10 px-3 py-2 text-sm text-red-300">
+            {erreur}
+          </p>
+        ) : null}
 
-      {succes ? (
-        <p className="mb-4 rounded-lg bg-green-50 px-3 py-2 text-sm text-green-700">
-          {succes}
-        </p>
-      ) : null}
-      {erreur ? (
-        <p className="mb-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
-          {erreur}
-        </p>
-      ) : null}
-
-      <ListeAbsences absences={absences} justification={{ enfantId: id }} />
+        <ListeAbsences absences={absences} justification={{ enfantId: id }} />
+      </div>
     </main>
   );
 }

@@ -66,46 +66,47 @@ export default async function EnfantsPage({
     (notes ?? []).filter((n) => n.eleve_id === eleveId);
 
   return (
-    <main className="mx-auto max-w-3xl p-4 sm:p-8">
-      <header className="mb-8 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Notes de mon enfant</h1>
-          <p className="text-sm text-gray-500">
-            {profil.prenom} {profil.nom} — Parent
-          </p>
-        </div>
-        <Link
-          href="/espace"
-          className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-100"
-        >
-          ← Retour
-        </Link>
-      </header>
-
-      {/* Choix du semestre */}
-      <div className="mb-8 inline-flex overflow-hidden rounded-lg border border-gray-300 text-sm">
-        {([1, 2] as const).map((s) => (
+    <main className="min-h-screen bg-slate-900 px-4 py-8 sm:px-8">
+      <div className="mx-auto max-w-3xl">
+        <header className="mb-8 flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-white">Notes de mon enfant</h1>
+            <p className="text-sm text-slate-400">
+              {profil.prenom} {profil.nom} — Parent
+            </p>
+          </div>
           <Link
-            key={s}
-            href={`/espace/enfants?semestre=${s}`}
-            className={
-              "px-3 py-1.5 " +
-              (s === sem
-                ? "bg-gray-900 font-medium text-white"
-                : "bg-white text-gray-700 hover:bg-gray-100")
-            }
+            href="/espace"
+            className="rounded-xl border border-slate-700 px-3 py-1.5 text-sm text-slate-300 transition hover:bg-slate-800"
           >
-            {s === 1 ? "1ᵉʳ semestre" : "2ᵉ semestre"}
+            ← Retour
           </Link>
-        ))}
-      </div>
+        </header>
 
-      {enfants.length === 0 ? (
-        <p className="rounded-lg bg-amber-50 px-4 py-3 text-sm text-amber-800">
-          Aucun enfant n&apos;est rattaché à votre compte. Contactez l&apos;école.
-        </p>
-      ) : (
-        <div className="flex flex-col gap-10">
+        {/* Choix du semestre */}
+        <div className="mb-8 inline-flex rounded-xl bg-slate-800/60 p-1 text-sm font-medium">
+          {([1, 2] as const).map((s) => (
+            <Link
+              key={s}
+              href={`/espace/enfants?semestre=${s}`}
+              className={
+                "rounded-lg px-3 py-1.5 transition " +
+                (s === sem
+                  ? "bg-green-500 text-slate-900"
+                  : "text-slate-300 hover:text-white")
+              }
+            >
+              {s === 1 ? "1ᵉʳ semestre" : "2ᵉ semestre"}
+            </Link>
+          ))}
+        </div>
+
+        {enfants.length === 0 ? (
+          <p className="rounded-2xl border border-amber-500/20 bg-amber-500/10 px-4 py-3 text-sm text-amber-300">
+            Aucun enfant n&apos;est rattaché à votre compte. Contactez l&apos;école.
+          </p>
+        ) : (
+          <div className="flex flex-col gap-10">
           {enfants.map((enfant) => {
             const notesEnfant = notesParEnfant(enfant.id);
 
@@ -134,38 +135,38 @@ export default async function EnfantsPage({
 
             return (
               <section key={enfant.id}>
-                <div className="mb-4 flex items-center justify-between">
-                  <h2 className="text-xl font-bold text-gray-900">
+                <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+                  <h2 className="text-xl font-bold text-white">
                     {enfant.prenom} {enfant.nom}
                   </h2>
-                  <div className="flex items-center gap-3">
-                    <p className="text-sm text-gray-700">
+                  <div className="flex flex-wrap items-center gap-3">
+                    <p className="text-sm text-slate-300">
                       Moyenne :{" "}
-                      <span className="font-semibold">
+                      <span className="font-semibold text-green-400">
                         {moyenneGenerale !== null ? moyenneGenerale.toFixed(2) : "—"}/20
                       </span>
                     </p>
                     <Link
                       href={`/espace/enfants/${enfant.id}/devoirs`}
-                      className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-100"
+                      className="rounded-xl border border-slate-700 px-3 py-1.5 text-sm font-medium text-slate-300 transition hover:bg-slate-800"
                     >
                       Devoirs
                     </Link>
                     <Link
                       href={`/espace/enfants/${enfant.id}/absences`}
-                      className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-100"
+                      className="rounded-xl border border-slate-700 px-3 py-1.5 text-sm font-medium text-slate-300 transition hover:bg-slate-800"
                     >
                       Absences
                     </Link>
                     <Link
                       href={`/espace/enfants/${enfant.id}/emploi-du-temps`}
-                      className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-100"
+                      className="rounded-xl border border-slate-700 px-3 py-1.5 text-sm font-medium text-slate-300 transition hover:bg-slate-800"
                     >
                       Emploi du temps
                     </Link>
                     <Link
                       href={`/espace/enfants/${enfant.id}/bulletin?semestre=${sem}`}
-                      className="rounded-lg bg-gray-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-gray-800"
+                      className="rounded-xl bg-green-500 px-3 py-1.5 text-sm font-semibold text-slate-900 transition hover:bg-green-400"
                     >
                       Bulletin
                     </Link>
@@ -173,7 +174,7 @@ export default async function EnfantsPage({
                 </div>
 
                 {notesEnfant.length === 0 ? (
-                  <p className="rounded-lg bg-gray-50 px-4 py-3 text-sm text-gray-500">
+                  <p className="rounded-2xl border border-slate-800 bg-slate-800/30 px-4 py-3 text-sm text-slate-400">
                     Pas de notes pour le {libelleSemestre}.
                   </p>
                 ) : (
@@ -181,35 +182,35 @@ export default async function EnfantsPage({
                     {lignes.map((l) => (
                       <div
                         key={l.nom}
-                        className="overflow-hidden rounded-2xl border border-gray-200 bg-white"
+                        className="overflow-hidden rounded-2xl border border-slate-800 bg-slate-800/30"
                       >
-                        <div className="flex items-center justify-between border-b border-gray-200 px-4 py-3">
-                          <h3 className="font-semibold text-gray-900">
+                        <div className="flex items-center justify-between border-b border-slate-800 px-4 py-3">
+                          <h3 className="font-semibold text-white">
                             {l.nom}{" "}
-                            <span className="text-sm font-normal text-gray-500">
+                            <span className="text-sm font-normal text-slate-400">
                               (coef {l.coef})
                             </span>
                           </h3>
-                          <p className="text-sm font-medium text-gray-700">
+                          <p className="text-sm font-medium text-slate-300">
                             Moyenne : {l.moyenne !== null ? l.moyenne.toFixed(2) : "—"}/20
                           </p>
                         </div>
-                        <ul className="divide-y divide-gray-200">
+                        <ul className="divide-y divide-slate-800">
                           {l.notes.map((n) => (
                             <li
                               key={n.id}
                               className="flex items-center justify-between gap-3 px-4 py-3"
                             >
                               <div>
-                                <p className="font-medium text-gray-900">
+                                <p className="font-medium text-white">
                                   {n.type === "composition" ? "Composition" : "Devoir"}
                                   {n.titre ? ` « ${n.titre} »` : ""}
                                 </p>
-                                <p className="text-sm text-gray-500">{n.date_evaluation}</p>
+                                <p className="text-sm text-slate-500">{n.date_evaluation}</p>
                               </div>
-                              <p className="text-lg font-bold text-gray-900">
+                              <p className="text-lg font-bold text-white">
                                 {n.valeur}
-                                <span className="text-sm font-normal text-gray-500">/20</span>
+                                <span className="text-sm font-normal text-slate-500">/20</span>
                               </p>
                             </li>
                           ))}
@@ -221,8 +222,9 @@ export default async function EnfantsPage({
               </section>
             );
           })}
-        </div>
-      )}
+          </div>
+        )}
+      </div>
     </main>
   );
 }

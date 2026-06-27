@@ -67,104 +67,106 @@ export default async function MesNotesPage({
   const moyenneGenerale = totalCoef > 0 ? totalPoints / totalCoef : null;
 
   return (
-    <main className="mx-auto max-w-3xl p-4 sm:p-8">
-      <header className="mb-8 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Mes notes</h1>
-          <p className="text-sm text-gray-500">
-            {profil.prenom} {profil.nom} — Élève
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
-          <Link
-            href={`/espace/mes-notes/bulletin?semestre=${sem}`}
-            className="rounded-lg bg-gray-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-gray-800"
-          >
-            Voir le bulletin
-          </Link>
-          <Link
-            href="/espace"
-            className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-100"
-          >
-            ← Retour
-          </Link>
-        </div>
-      </header>
-
-      {/* Choix du semestre */}
-      <div className="mb-6 inline-flex overflow-hidden rounded-lg border border-gray-300 text-sm">
-        {([1, 2] as const).map((s) => (
-          <Link
-            key={s}
-            href={`/espace/mes-notes?semestre=${s}`}
-            className={
-              "px-3 py-1.5 " +
-              (s === sem
-                ? "bg-gray-900 font-medium text-white"
-                : "bg-white text-gray-700 hover:bg-gray-100")
-            }
-          >
-            {s === 1 ? "1ᵉʳ semestre" : "2ᵉ semestre"}
-          </Link>
-        ))}
-      </div>
-
-      {!notes || notes.length === 0 ? (
-        <p className="rounded-lg bg-amber-50 px-4 py-3 text-sm text-amber-800">
-          Pas de notes pour le {libelleSemestre}.
-        </p>
-      ) : (
-        <>
-          {/* Moyenne générale */}
-          <section className="mb-8 flex items-center justify-between rounded-2xl border border-gray-200 bg-white p-6">
-            <p className="text-lg font-semibold text-gray-900">Moyenne générale</p>
-            <p className="text-2xl font-bold text-gray-900">
-              {moyenneGenerale !== null ? moyenneGenerale.toFixed(2) : "—"}
-              <span className="text-base font-normal text-gray-500">/20</span>
+    <main className="min-h-screen bg-slate-900 px-4 py-8 sm:px-8">
+      <div className="mx-auto max-w-3xl">
+        <header className="mb-8 flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-white">Mes notes</h1>
+            <p className="text-sm text-slate-400">
+              {profil.prenom} {profil.nom} — Élève
             </p>
-          </section>
-
-          {/* Notes par matière */}
-          <div className="flex flex-col gap-6">
-            {lignes.map((l) => (
-              <section
-                key={l.nom}
-                className="overflow-hidden rounded-2xl border border-gray-200 bg-white"
-              >
-                <div className="flex items-center justify-between border-b border-gray-200 px-4 py-3">
-                  <h2 className="text-lg font-semibold text-gray-900">
-                    {l.nom}{" "}
-                    <span className="text-sm font-normal text-gray-500">(coef {l.coef})</span>
-                  </h2>
-                  <p className="text-sm font-medium text-gray-700">
-                    Moyenne : {l.moyenne !== null ? l.moyenne.toFixed(2) : "—"}/20
-                  </p>
-                </div>
-                <ul className="divide-y divide-gray-200">
-                  {l.notes.map((n) => (
-                    <li
-                      key={n.id}
-                      className="flex items-center justify-between gap-3 px-4 py-3"
-                    >
-                      <div>
-                        <p className="font-medium text-gray-900">
-                          {n.type === "composition" ? "Composition" : "Devoir"}
-                          {n.titre ? ` « ${n.titre} »` : ""}
-                        </p>
-                        <p className="text-sm text-gray-500">{n.date_evaluation}</p>
-                      </div>
-                      <p className="text-lg font-bold text-gray-900">
-                        {n.valeur}
-                        <span className="text-sm font-normal text-gray-500">/20</span>
-                      </p>
-                    </li>
-                  ))}
-                </ul>
-              </section>
-            ))}
           </div>
-        </>
-      )}
+          <div className="flex items-center gap-2">
+            <Link
+              href={`/espace/mes-notes/bulletin?semestre=${sem}`}
+              className="rounded-xl bg-green-500 px-3 py-1.5 text-sm font-semibold text-slate-900 transition hover:bg-green-400"
+            >
+              Voir le bulletin
+            </Link>
+            <Link
+              href="/espace"
+              className="rounded-xl border border-slate-700 px-3 py-1.5 text-sm text-slate-300 transition hover:bg-slate-800"
+            >
+              ← Retour
+            </Link>
+          </div>
+        </header>
+
+        {/* Choix du semestre */}
+        <div className="mb-6 inline-flex rounded-xl bg-slate-800/60 p-1 text-sm font-medium">
+          {([1, 2] as const).map((s) => (
+            <Link
+              key={s}
+              href={`/espace/mes-notes?semestre=${s}`}
+              className={
+                "rounded-lg px-3 py-1.5 transition " +
+                (s === sem
+                  ? "bg-green-500 text-slate-900"
+                  : "text-slate-300 hover:text-white")
+              }
+            >
+              {s === 1 ? "1ᵉʳ semestre" : "2ᵉ semestre"}
+            </Link>
+          ))}
+        </div>
+
+        {!notes || notes.length === 0 ? (
+          <p className="rounded-2xl border border-amber-500/20 bg-amber-500/10 px-4 py-3 text-sm text-amber-300">
+            Pas de notes pour le {libelleSemestre}.
+          </p>
+        ) : (
+          <>
+            {/* Moyenne générale */}
+            <section className="mb-8 flex items-center justify-between rounded-2xl border border-slate-800 bg-slate-800/30 p-6">
+              <p className="text-lg font-semibold text-white">Moyenne générale</p>
+              <p className="text-2xl font-bold text-green-400">
+                {moyenneGenerale !== null ? moyenneGenerale.toFixed(2) : "—"}
+                <span className="text-base font-normal text-slate-500">/20</span>
+              </p>
+            </section>
+
+            {/* Notes par matière */}
+            <div className="flex flex-col gap-6">
+              {lignes.map((l) => (
+                <section
+                  key={l.nom}
+                  className="overflow-hidden rounded-2xl border border-slate-800 bg-slate-800/30"
+                >
+                  <div className="flex items-center justify-between border-b border-slate-800 px-4 py-3">
+                    <h2 className="text-lg font-semibold text-white">
+                      {l.nom}{" "}
+                      <span className="text-sm font-normal text-slate-400">(coef {l.coef})</span>
+                    </h2>
+                    <p className="text-sm font-medium text-slate-300">
+                      Moyenne : {l.moyenne !== null ? l.moyenne.toFixed(2) : "—"}/20
+                    </p>
+                  </div>
+                  <ul className="divide-y divide-slate-800">
+                    {l.notes.map((n) => (
+                      <li
+                        key={n.id}
+                        className="flex items-center justify-between gap-3 px-4 py-3"
+                      >
+                        <div>
+                          <p className="font-medium text-white">
+                            {n.type === "composition" ? "Composition" : "Devoir"}
+                            {n.titre ? ` « ${n.titre} »` : ""}
+                          </p>
+                          <p className="text-sm text-slate-500">{n.date_evaluation}</p>
+                        </div>
+                        <p className="text-lg font-bold text-white">
+                          {n.valeur}
+                          <span className="text-sm font-normal text-slate-500">/20</span>
+                        </p>
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              ))}
+            </div>
+          </>
+        )}
+      </div>
     </main>
   );
 }

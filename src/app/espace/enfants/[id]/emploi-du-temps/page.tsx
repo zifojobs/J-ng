@@ -78,23 +78,25 @@ export default async function EmploiDuTempsEnfantPage({
   }
 
   return (
-    <main className="mx-auto max-w-3xl p-4 sm:p-8">
-      <header className="mb-8 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Emploi du temps</h1>
-          <p className="text-sm text-gray-500">
-            {enfant?.prenom} {enfant?.nom}
-          </p>
-        </div>
-        <Link
-          href="/espace/enfants"
-          className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-100"
-        >
-          ← Retour
-        </Link>
-      </header>
+    <main className="min-h-screen bg-slate-900 px-4 py-8 sm:px-8">
+      <div className="mx-auto max-w-3xl">
+        <header className="mb-8 flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-white">Emploi du temps</h1>
+            <p className="text-sm text-slate-400">
+              {enfant?.prenom} {enfant?.nom}
+            </p>
+          </div>
+          <Link
+            href="/espace/enfants"
+            className="rounded-xl border border-slate-700 px-3 py-1.5 text-sm text-slate-300 transition hover:bg-slate-800"
+          >
+            ← Retour
+          </Link>
+        </header>
 
-      <EmploiDuTemps creneaux={creneaux} />
+        <EmploiDuTemps creneaux={creneaux} />
+      </div>
     </main>
   );
 }
