@@ -39,3 +39,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# outils / données de démo locaux (identifiants, scripts ponctuels, maquettes)
+_*.mjs
+COMPTES-DEMO.md
+*.pdf
