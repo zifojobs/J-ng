@@ -86,24 +86,24 @@ export default async function ConversationPage({
   }
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-3xl flex-col p-4 sm:p-8">
+    <main className="mx-auto flex min-h-screen max-w-3xl flex-col bg-slate-900 px-4 py-8 sm:px-8">
       <header className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">
+          <h1 className="text-2xl font-bold text-white">
             {autre.prenom} {autre.nom}
           </h1>
-          <p className="text-sm text-gray-500">{libelleRole(autre.role)}</p>
+          <p className="text-sm text-slate-400">{libelleRole(autre.role)}</p>
         </div>
         <Link
           href="/messages"
-          className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-100"
+          className="rounded-xl border border-slate-700 px-3 py-1.5 text-sm text-slate-300 transition hover:bg-slate-800"
         >
           ← Retour
         </Link>
       </header>
 
       {erreur ? (
-        <p className="mb-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
+        <p className="mb-4 rounded-xl border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-300">
           {erreur}
         </p>
       ) : null}
@@ -111,7 +111,7 @@ export default async function ConversationPage({
       {/* Le fil de la discussion */}
       <section className="mb-6 flex flex-1 flex-col gap-3">
         {!messages || messages.length === 0 ? (
-          <p className="rounded-lg bg-gray-50 px-4 py-3 text-sm text-gray-500">
+          <p className="rounded-2xl border border-slate-800 bg-slate-800/30 px-4 py-3 text-sm text-slate-400">
             Aucun message. Écrivez le premier ci-dessous.
           </p>
         ) : (
@@ -126,15 +126,15 @@ export default async function ConversationPage({
                   className={
                     "max-w-[80%] rounded-2xl px-4 py-2 " +
                     (deMoi
-                      ? "bg-gray-900 text-white"
-                      : "border border-gray-200 bg-white text-gray-900")
+                      ? "bg-green-500 text-slate-900"
+                      : "border border-slate-700 bg-slate-800/60 text-slate-100")
                   }
                 >
                   <p className="whitespace-pre-wrap text-sm">{m.contenu}</p>
                   <p
                     className={
                       "mt-1 text-right text-[11px] " +
-                      (deMoi ? "text-gray-300" : "text-gray-400")
+                      (deMoi ? "text-slate-900/60" : "text-slate-500")
                     }
                   >
                     {quand(m.created_at)}
@@ -147,7 +147,7 @@ export default async function ConversationPage({
       </section>
 
       {/* Zone de réponse */}
-      <form action={envoyerMessage} className="sticky bottom-0 flex flex-col gap-2 bg-white pt-2">
+      <form action={envoyerMessage} className="sticky bottom-0 flex flex-col gap-2 bg-slate-900 pt-2">
         <input type="hidden" name="destinataire_id" value={autre.id} />
         <textarea
           name="contenu"
@@ -155,10 +155,10 @@ export default async function ConversationPage({
           required
           maxLength={2000}
           placeholder="Votre message…"
-          className="rounded-lg border border-gray-300 px-3 py-2 text-gray-900 outline-none focus:border-gray-900"
+          className="rounded-xl border border-slate-700 bg-slate-800/60 px-3 py-2 text-slate-100 placeholder:text-slate-500 outline-none transition focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
         />
         <div className="flex justify-end">
-          <button className="rounded-lg bg-gray-900 px-4 py-2 font-medium text-white hover:bg-gray-800">
+          <button className="rounded-xl bg-green-500 px-4 py-2 font-semibold text-slate-900 transition hover:bg-green-400">
             Envoyer
           </button>
         </div>

@@ -60,65 +60,67 @@ export default async function MessagesPage() {
   const conversations = [...parPersonne.values()];
 
   return (
-    <main className="mx-auto max-w-3xl p-4 sm:p-8">
-      <header className="mb-8 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Messages</h1>
-          <p className="text-sm text-gray-500">
-            {profil.prenom} {profil.nom}
-          </p>
+    <main className="min-h-screen bg-slate-900 px-4 py-8 sm:px-8">
+      <div className="mx-auto max-w-3xl">
+        <header className="mb-8 flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-white">Messages</h1>
+            <p className="text-sm text-slate-400">
+              {profil.prenom} {profil.nom}
+            </p>
+          </div>
+          <Link
+            href={retourHref}
+            className="rounded-xl border border-slate-700 px-3 py-1.5 text-sm text-slate-300 transition hover:bg-slate-800"
+          >
+            ← Retour
+          </Link>
+        </header>
+
+        <div className="mb-6">
+          <Link
+            href="/messages/nouveau"
+            className="inline-block rounded-xl bg-green-500 px-4 py-2 font-semibold text-slate-900 transition hover:bg-green-400"
+          >
+            Nouveau message
+          </Link>
         </div>
-        <Link
-          href={retourHref}
-          className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-100"
-        >
-          ← Retour
-        </Link>
-      </header>
 
-      <div className="mb-6">
-        <Link
-          href="/messages/nouveau"
-          className="inline-block rounded-lg bg-gray-900 px-4 py-2 font-medium text-white hover:bg-gray-800"
-        >
-          Nouveau message
-        </Link>
-      </div>
-
-      {conversations.length === 0 ? (
-        <p className="rounded-lg bg-gray-50 px-4 py-3 text-sm text-gray-500">
-          Aucune conversation pour le moment. Commencez-en une avec « Nouveau message ».
-        </p>
-      ) : (
-        <ul className="divide-y divide-gray-200 overflow-hidden rounded-2xl border border-gray-200 bg-white">
-          {conversations.map((c) => (
-            <li key={c.autreId}>
-              <Link
-                href={"/messages/" + c.autreId}
-                className="flex items-center justify-between gap-3 px-4 py-3 hover:bg-gray-50"
-              >
-                <div className="min-w-0">
-                  <p className="font-medium text-gray-900">
-                    {c.autre ? `${c.autre.prenom} ${c.autre.nom}` : "—"}{" "}
-                    <span className="text-sm font-normal text-gray-400">
-                      · {c.autre ? libelleRole(c.autre.role) : ""}
+        {conversations.length === 0 ? (
+          <p className="rounded-2xl border border-slate-800 bg-slate-800/30 px-4 py-3 text-sm text-slate-400">
+            Aucune conversation pour le moment. Commencez-en une avec « Nouveau message ».
+          </p>
+        ) : (
+          <ul className="divide-y divide-slate-800 overflow-hidden rounded-2xl border border-slate-800 bg-slate-800/30">
+            {conversations.map((c) => (
+              <li key={c.autreId}>
+                <Link
+                  href={"/messages/" + c.autreId}
+                  className="flex items-center justify-between gap-3 px-4 py-3 transition hover:bg-slate-800/60"
+                >
+                  <div className="min-w-0">
+                    <p className="font-medium text-white">
+                      {c.autre ? `${c.autre.prenom} ${c.autre.nom}` : "—"}{" "}
+                      <span className="text-sm font-normal text-slate-500">
+                        · {c.autre ? libelleRole(c.autre.role) : ""}
+                      </span>
+                    </p>
+                    <p className="truncate text-sm text-slate-400">
+                      {c.dernier.expediteur_id === profil.id ? "Vous : " : ""}
+                      {c.dernier.contenu}
+                    </p>
+                  </div>
+                  {c.nonLus > 0 ? (
+                    <span className="shrink-0 rounded-full bg-green-500 px-2.5 py-0.5 text-xs font-semibold text-slate-900">
+                      {c.nonLus}
                     </span>
-                  </p>
-                  <p className="truncate text-sm text-gray-500">
-                    {c.dernier.expediteur_id === profil.id ? "Vous : " : ""}
-                    {c.dernier.contenu}
-                  </p>
-                </div>
-                {c.nonLus > 0 ? (
-                  <span className="shrink-0 rounded-full bg-gray-900 px-2.5 py-0.5 text-xs font-semibold text-white">
-                    {c.nonLus}
-                  </span>
-                ) : null}
-              </Link>
-            </li>
-          ))}
-        </ul>
-      )}
+                  ) : null}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
     </main>
   );
 }
