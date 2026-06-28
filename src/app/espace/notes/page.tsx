@@ -34,46 +34,48 @@ export default async function NotesAffectationsPage() {
       : "—");
 
   return (
-    <main className="mx-auto max-w-3xl p-4 sm:p-8">
-      <header className="mb-8 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Saisir des notes</h1>
-          <p className="text-sm text-gray-500">
-            {profil.prenom} {profil.nom} — Professeur
-          </p>
-        </div>
-        <Link
-          href="/espace"
-          className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-100"
-        >
-          ← Retour
-        </Link>
-      </header>
+    <main className="min-h-screen bg-slate-900 px-4 py-8 sm:px-8">
+      <div className="mx-auto max-w-3xl">
+        <header className="mb-8 flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-white">Saisir des notes</h1>
+            <p className="text-sm text-slate-400">
+              {profil.prenom} {profil.nom} — Professeur
+            </p>
+          </div>
+          <Link
+            href="/espace"
+            className="rounded-xl border border-slate-700 px-3 py-1.5 text-sm text-slate-300 transition hover:bg-slate-800"
+          >
+            ← Retour
+          </Link>
+        </header>
 
-      <p className="mb-6 text-sm text-gray-500">
-        Choisissez la matière et la classe dans lesquelles vous voulez saisir des notes.
-      </p>
-
-      {affectations && affectations.length > 0 ? (
-        <ul className="divide-y divide-gray-200 overflow-hidden rounded-2xl border border-gray-200 bg-white">
-          {affectations.map((a) => (
-            <li key={a.id}>
-              <Link
-                href={"/espace/notes/" + a.id}
-                className="flex items-center justify-between gap-3 px-4 py-3 hover:bg-gray-50"
-              >
-                <span className="font-medium text-gray-900">{libelle(a)}</span>
-                <span className="text-sm text-gray-400">›</span>
-              </Link>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p className="rounded-lg bg-amber-50 px-4 py-3 text-sm text-amber-800">
-          Vous n&apos;avez encore aucune affectation. Demandez à l&apos;administrateur de
-          votre école de vous affecter à une matière et une classe.
+        <p className="mb-6 text-sm text-slate-400">
+          Choisissez la matière et la classe dans lesquelles vous voulez saisir des notes.
         </p>
-      )}
+
+        {affectations && affectations.length > 0 ? (
+          <ul className="divide-y divide-slate-800 overflow-hidden rounded-2xl border border-slate-800 bg-slate-800/30">
+            {affectations.map((a) => (
+              <li key={a.id}>
+                <Link
+                  href={"/espace/notes/" + a.id}
+                  className="flex items-center justify-between gap-3 px-4 py-3 transition hover:bg-slate-800/60"
+                >
+                  <span className="font-medium text-white">{libelle(a)}</span>
+                  <span className="text-sm text-slate-500">›</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="rounded-2xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-200">
+            Vous n&apos;avez encore aucune affectation. Demandez à l&apos;administrateur de
+            votre école de vous affecter à une matière et une classe.
+          </p>
+        )}
+      </div>
     </main>
   );
 }

@@ -117,144 +117,146 @@ export default async function AppelPage({
   const elevesIds = (eleves ?? []).map((e) => e.id).join(",");
 
   return (
-    <main className="mx-auto max-w-3xl p-4 sm:p-8">
-      <header className="mb-8 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">{titreAffectation}</h1>
-          <p className="text-sm text-gray-500">
-            {profil.prenom} {profil.nom} — Professeur
+    <main className="min-h-screen bg-slate-900 px-4 py-8 sm:px-8">
+      <div className="mx-auto max-w-3xl">
+        <header className="mb-8 flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-white">{titreAffectation}</h1>
+            <p className="text-sm text-slate-400">
+              {profil.prenom} {profil.nom} — Professeur
+            </p>
+          </div>
+          <Link
+            href="/espace/absences"
+            className="rounded-xl border border-slate-700 px-3 py-1.5 text-sm text-slate-300 transition hover:bg-slate-800"
+          >
+            ← Retour
+          </Link>
+        </header>
+
+        {succes ? (
+          <p className="mb-4 rounded-xl border border-green-500/30 bg-green-500/10 px-3 py-2 text-sm text-green-300">
+            {succes}
           </p>
-        </div>
-        <Link
-          href="/espace/absences"
-          className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-100"
-        >
-          ← Retour
-        </Link>
-      </header>
-
-      {succes ? (
-        <p className="mb-4 rounded-lg bg-green-50 px-3 py-2 text-sm text-green-700">
-          {succes}
-        </p>
-      ) : null}
-      {erreur ? (
-        <p className="mb-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
-          {erreur}
-        </p>
-      ) : null}
-
-      {/* Choix de la date de l'appel (recharge la page pour pré-remplir) */}
-      <form method="get" className="mb-6 flex flex-wrap items-end gap-3">
-        <div className="flex flex-col gap-1">
-          <label className="text-sm font-medium text-gray-700">Date de l&apos;appel</label>
-          <input
-            name="date"
-            type="date"
-            defaultValue={dateAppel}
-            className="rounded-lg border border-gray-300 px-3 py-2 text-gray-900 outline-none focus:border-gray-900"
-          />
-        </div>
-        <button className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100">
-          Changer de jour
-        </button>
-      </form>
-
-      {!eleves || eleves.length === 0 ? (
-        <p className="mb-8 rounded-lg bg-amber-50 px-4 py-3 text-sm text-amber-800">
-          Aucun élève dans cette classe pour le moment.
-        </p>
-      ) : (
-        /* Formulaire d'appel : un statut par élève, présents par défaut */
-        <section className="mb-10 rounded-2xl border border-gray-200 bg-white p-6">
-          <h2 className="mb-1 text-lg font-semibold text-gray-900">
-            Appel du {dateLisible(dateAppel)}
-          </h2>
-          <p className="mb-4 text-sm text-gray-500">
-            Laissez « Présent » par défaut ; ne changez que les absents et les retards.
+        ) : null}
+        {erreur ? (
+          <p className="mb-4 rounded-xl border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-300">
+            {erreur}
           </p>
-          <form action={enregistrerAppel} className="flex flex-col gap-3">
-            <input type="hidden" name="affectation_id" value={affectation.id} />
-            <input type="hidden" name="date_absence" value={dateAppel} />
-            <input type="hidden" name="eleve_ids" value={elevesIds} />
+        ) : null}
 
-            <ul className="divide-y divide-gray-200">
-              {eleves.map((e) => (
-                <li
-                  key={e.id}
-                  className="flex items-center justify-between gap-3 py-2.5"
-                >
-                  <span className="font-medium text-gray-900">
-                    {e.prenom} {e.nom}
-                  </span>
-                  <select
-                    name={"statut_" + e.id}
-                    defaultValue={statutDe(e.id)}
-                    className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm text-gray-900 outline-none focus:border-gray-900"
-                  >
-                    <option value="present">Présent</option>
-                    <option value="absent">Absent</option>
-                    <option value="retard">En retard</option>
-                  </select>
-                </li>
-              ))}
-            </ul>
+        {/* Choix de la date de l'appel (recharge la page pour pré-remplir) */}
+        <form method="get" className="mb-6 flex flex-wrap items-end gap-3">
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-medium text-slate-300">Date de l&apos;appel</label>
+            <input
+              name="date"
+              type="date"
+              defaultValue={dateAppel}
+              className="rounded-xl border border-slate-700 bg-slate-800/60 px-3 py-2 text-slate-100 outline-none transition focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
+            />
+          </div>
+          <button className="rounded-xl border border-slate-700 px-4 py-2 text-sm font-medium text-slate-300 transition hover:bg-slate-800">
+            Changer de jour
+          </button>
+        </form>
 
-            <div className="flex justify-end pt-2">
-              <button className="rounded-lg bg-gray-900 px-4 py-2 font-medium text-white hover:bg-gray-800">
-                Enregistrer l&apos;appel
-              </button>
-            </div>
-          </form>
-        </section>
-      )}
-
-      {/* Historique des appels (absents / retards enregistrés) */}
-      <section className="flex flex-col gap-6">
-        <h2 className="text-lg font-semibold text-gray-900">Historique</h2>
-        {journees.length === 0 ? (
-          <p className="text-sm text-gray-500">
-            Aucune absence enregistrée pour ce cours.
+        {!eleves || eleves.length === 0 ? (
+          <p className="mb-8 rounded-2xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-200">
+            Aucun élève dans cette classe pour le moment.
           </p>
         ) : (
-          journees.map(([jour, liste]) => (
-            <div key={jour}>
-              <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-gray-500">
-                {dateLisible(jour)} ({liste.length})
-              </h3>
-              <ul className="divide-y divide-gray-200 overflow-hidden rounded-2xl border border-gray-200 bg-white">
-                {liste.map((a) => (
+          /* Formulaire d'appel : un statut par élève, présents par défaut */
+          <section className="mb-10 rounded-2xl border border-slate-800 bg-slate-800/30 p-6">
+            <h2 className="mb-1 text-lg font-semibold text-white">
+              Appel du {dateLisible(dateAppel)}
+            </h2>
+            <p className="mb-4 text-sm text-slate-400">
+              Laissez « Présent » par défaut ; ne changez que les absents et les retards.
+            </p>
+            <form action={enregistrerAppel} className="flex flex-col gap-3">
+              <input type="hidden" name="affectation_id" value={affectation.id} />
+              <input type="hidden" name="date_absence" value={dateAppel} />
+              <input type="hidden" name="eleve_ids" value={elevesIds} />
+
+              <ul className="divide-y divide-slate-800">
+                {eleves.map((e) => (
                   <li
-                    key={a.id}
-                    className="flex items-center justify-between gap-3 px-4 py-3"
+                    key={e.id}
+                    className="flex items-center justify-between gap-3 py-2.5"
                   >
-                    <span className="font-medium text-gray-900">
-                      {a.eleve ? `${a.eleve.prenom} ${a.eleve.nom}` : "—"}
+                    <span className="font-medium text-white">
+                      {e.prenom} {e.nom}
                     </span>
-                    <span className="flex items-center gap-2 text-sm">
-                      <span
-                        className={
-                          "rounded-lg px-2.5 py-1 font-medium " +
-                          (a.statut === "absent"
-                            ? "bg-red-50 text-red-700"
-                            : "bg-amber-50 text-amber-800")
-                        }
-                      >
-                        {a.statut === "absent" ? "Absent" : "En retard"}
-                      </span>
-                      {a.justifie ? (
-                        <span className="rounded-lg bg-green-50 px-2.5 py-1 font-medium text-green-700">
-                          Justifié
-                        </span>
-                      ) : null}
-                    </span>
+                    <select
+                      name={"statut_" + e.id}
+                      defaultValue={statutDe(e.id)}
+                      className="rounded-xl border border-slate-700 bg-slate-800/60 px-3 py-1.5 text-sm text-slate-100 outline-none transition focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
+                    >
+                      <option value="present">Présent</option>
+                      <option value="absent">Absent</option>
+                      <option value="retard">En retard</option>
+                    </select>
                   </li>
                 ))}
               </ul>
-            </div>
-          ))
+
+              <div className="flex justify-end pt-2">
+                <button className="rounded-xl bg-green-500 px-4 py-2 font-semibold text-slate-900 transition hover:bg-green-400">
+                  Enregistrer l&apos;appel
+                </button>
+              </div>
+            </form>
+          </section>
         )}
-      </section>
+
+        {/* Historique des appels (absents / retards enregistrés) */}
+        <section className="flex flex-col gap-6">
+          <h2 className="text-lg font-semibold text-white">Historique</h2>
+          {journees.length === 0 ? (
+            <p className="text-sm text-slate-400">
+              Aucune absence enregistrée pour ce cours.
+            </p>
+          ) : (
+            journees.map(([jour, liste]) => (
+              <div key={jour}>
+                <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-slate-400">
+                  {dateLisible(jour)} ({liste.length})
+                </h3>
+                <ul className="divide-y divide-slate-800 overflow-hidden rounded-2xl border border-slate-800 bg-slate-800/30">
+                  {liste.map((a) => (
+                    <li
+                      key={a.id}
+                      className="flex items-center justify-between gap-3 px-4 py-3"
+                    >
+                      <span className="font-medium text-white">
+                        {a.eleve ? `${a.eleve.prenom} ${a.eleve.nom}` : "—"}
+                      </span>
+                      <span className="flex items-center gap-2 text-sm">
+                        <span
+                          className={
+                            "rounded-lg px-2.5 py-1 font-medium " +
+                            (a.statut === "absent"
+                              ? "bg-red-500/10 text-red-300"
+                              : "bg-amber-500/10 text-amber-300")
+                          }
+                        >
+                          {a.statut === "absent" ? "Absent" : "En retard"}
+                        </span>
+                        {a.justifie ? (
+                          <span className="rounded-lg bg-green-500/10 px-2.5 py-1 font-medium text-green-300">
+                            Justifié
+                          </span>
+                        ) : null}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))
+          )}
+        </section>
+      </div>
     </main>
   );
 }

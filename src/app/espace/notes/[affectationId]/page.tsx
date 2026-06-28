@@ -117,235 +117,237 @@ export default async function SaisieNotesPage({
       : "—");
 
   return (
-    <main className="mx-auto max-w-3xl p-4 sm:p-8">
-      <header className="mb-8 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">{titreAffectation}</h1>
-          <p className="text-sm text-gray-500">
-            {profil.prenom} {profil.nom} — Professeur
+    <main className="min-h-screen bg-slate-900 px-4 py-8 sm:px-8">
+      <div className="mx-auto max-w-3xl">
+        <header className="mb-8 flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-white">{titreAffectation}</h1>
+            <p className="text-sm text-slate-400">
+              {profil.prenom} {profil.nom} — Professeur
+            </p>
+          </div>
+          <Link
+            href="/espace/notes"
+            className="rounded-xl border border-slate-700 px-3 py-1.5 text-sm text-slate-300 transition hover:bg-slate-800"
+          >
+            ← Retour
+          </Link>
+        </header>
+
+        {succes ? (
+          <p className="mb-4 rounded-xl border border-green-500/30 bg-green-500/10 px-3 py-2 text-sm text-green-300">
+            {succes}
           </p>
-        </div>
-        <Link
-          href="/espace/notes"
-          className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-100"
-        >
-          ← Retour
-        </Link>
-      </header>
+        ) : null}
+        {erreur ? (
+          <p className="mb-4 rounded-xl border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-300">
+            {erreur}
+          </p>
+        ) : null}
 
-      {succes ? (
-        <p className="mb-4 rounded-lg bg-green-50 px-3 py-2 text-sm text-green-700">
-          {succes}
-        </p>
-      ) : null}
-      {erreur ? (
-        <p className="mb-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
-          {erreur}
-        </p>
-      ) : null}
-
-      {!eleves || eleves.length === 0 ? (
-        <p className="mb-8 rounded-lg bg-amber-50 px-4 py-3 text-sm text-amber-800">
-          Aucun élève dans cette classe pour le moment.
-        </p>
-      ) : (
-        /* Formulaire de saisie d'une note */
-        <section className="mb-10 rounded-2xl border border-gray-200 bg-white p-6">
-          <h2 className="mb-4 text-lg font-semibold text-gray-900">Ajouter une note</h2>
-          <form action={ajouterNote} className="flex flex-col gap-4">
-            <input type="hidden" name="affectation_id" value={affectation.id} />
-
-            <div className="flex flex-col gap-4 sm:flex-row">
-              <div className="flex flex-1 flex-col gap-1">
-                <label className="text-sm font-medium text-gray-700">Élève</label>
-                <select
-                  name="eleve_id"
-                  required
-                  defaultValue=""
-                  className="rounded-lg border border-gray-300 px-3 py-2 text-gray-900 outline-none focus:border-gray-900"
-                >
-                  <option value="" disabled>
-                    Choisir…
-                  </option>
-                  {eleves.map((e) => (
-                    <option key={e.id} value={e.id}>
-                      {e.prenom} {e.nom}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="flex flex-1 flex-col gap-1">
-                <label className="text-sm font-medium text-gray-700">Type</label>
-                <select
-                  name="type"
-                  required
-                  defaultValue="devoir"
-                  className="rounded-lg border border-gray-300 px-3 py-2 text-gray-900 outline-none focus:border-gray-900"
-                >
-                  <option value="devoir">Devoir</option>
-                  <option value="composition">Composition</option>
-                </select>
-              </div>
-              <div className="flex flex-1 flex-col gap-1">
-                <label className="text-sm font-medium text-gray-700">Semestre</label>
-                <select
-                  name="semestre"
-                  required
-                  defaultValue="1"
-                  className="rounded-lg border border-gray-300 px-3 py-2 text-gray-900 outline-none focus:border-gray-900"
-                >
-                  <option value="1">1ᵉʳ semestre</option>
-                  <option value="2">2ᵉ semestre</option>
-                </select>
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-4 sm:flex-row">
-              <div className="flex flex-1 flex-col gap-1">
-                <label className="text-sm font-medium text-gray-700">
-                  Titre (facultatif)
-                </label>
-                <input
-                  name="titre"
-                  placeholder="Devoir 1"
-                  className="rounded-lg border border-gray-300 px-3 py-2 text-gray-900 outline-none focus:border-gray-900"
-                />
-              </div>
-              <div className="flex flex-1 flex-col gap-1">
-                <label className="text-sm font-medium text-gray-700">Note / 20</label>
-                <input
-                  name="valeur"
-                  required
-                  inputMode="decimal"
-                  placeholder="14"
-                  className="rounded-lg border border-gray-300 px-3 py-2 text-gray-900 outline-none focus:border-gray-900"
-                />
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
-              <div className="flex flex-1 flex-col gap-1">
-                <label className="text-sm font-medium text-gray-700">Date</label>
-                <input
-                  name="date_evaluation"
-                  type="date"
-                  className="rounded-lg border border-gray-300 px-3 py-2 text-gray-900 outline-none focus:border-gray-900"
-                />
-              </div>
-              <button className="rounded-lg bg-gray-900 px-4 py-2 font-medium text-white hover:bg-gray-800">
-                Enregistrer
-              </button>
-            </div>
-          </form>
-        </section>
-      )}
-
-      {/* Liste des notes saisies, regroupées par semestre */}
-      <section className="flex flex-col gap-8">
-        <h2 className="text-lg font-semibold text-gray-900">
-          Notes saisies ({notes?.length ?? 0})
-        </h2>
-        {!notes || notes.length === 0 ? (
-          <p className="text-sm text-gray-500">
-            Aucune note pour l&apos;instant. Ajoutez-en une ci-dessus.
+        {!eleves || eleves.length === 0 ? (
+          <p className="mb-8 rounded-2xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-200">
+            Aucun élève dans cette classe pour le moment.
           </p>
         ) : (
-          notesParSemestre.map(({ semestre, liste }) => (
-            <div key={semestre}>
-              <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-gray-500">
-                {semestre === 1 ? "1ᵉʳ semestre" : "2ᵉ semestre"} ({liste.length})
-              </h3>
-              {liste.length === 0 ? (
-                <p className="text-sm text-gray-400">Aucune note.</p>
-              ) : (
-                <ul className="divide-y divide-gray-200 overflow-hidden rounded-2xl border border-gray-200 bg-white">
-                  {liste.map((n) => (
-                    <li
-                      key={n.id}
-                      className="flex items-center justify-between gap-3 px-4 py-3"
-                    >
-                      <div>
-                        <p className="font-medium text-gray-900">
-                          {n.eleve ? `${n.eleve.prenom} ${n.eleve.nom}` : "—"} —{" "}
-                          <span className="text-gray-900">{n.valeur}/20</span>
-                        </p>
-                        <p className="text-sm text-gray-500">
-                          {n.type === "composition" ? "Composition" : "Devoir"}
-                          {n.titre ? ` « ${n.titre} »` : ""} · {n.date_evaluation}
-                        </p>
-                      </div>
-                      <form action={supprimerNote}>
-                        <input type="hidden" name="id" value={n.id} />
-                        <input type="hidden" name="affectation_id" value={affectation.id} />
-                        <button className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm text-red-600 hover:bg-red-50">
-                          Supprimer
-                        </button>
-                      </form>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-          ))
-        )}
-      </section>
+          /* Formulaire de saisie d'une note */
+          <section className="mb-10 rounded-2xl border border-slate-800 bg-slate-800/30 p-6">
+            <h2 className="mb-4 text-lg font-semibold text-white">Ajouter une note</h2>
+            <form action={ajouterNote} className="flex flex-col gap-4">
+              <input type="hidden" name="affectation_id" value={affectation.id} />
 
-      {/* Appréciations : un commentaire par élève, pour le semestre choisi */}
-      {eleves && eleves.length > 0 ? (
-        <section className="mt-10">
-          <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-            <h2 className="text-lg font-semibold text-gray-900">Appréciations</h2>
-            {/* Choix du semestre commenté */}
-            <div className="inline-flex overflow-hidden rounded-lg border border-gray-300 text-sm">
-              {([1, 2] as const).map((s) => (
-                <Link
-                  key={s}
-                  href={`/espace/notes/${affectation.id}?app_semestre=${s}`}
-                  className={
-                    "px-3 py-1.5 " +
-                    (s === semestreAppreciation
-                      ? "bg-gray-900 font-medium text-white"
-                      : "bg-white text-gray-700 hover:bg-gray-100")
-                  }
-                >
-                  {s === 1 ? "1ᵉʳ semestre" : "2ᵉ semestre"}
-                </Link>
-              ))}
-            </div>
-          </div>
+              <div className="flex flex-col gap-4 sm:flex-row">
+                <div className="flex flex-1 flex-col gap-1">
+                  <label className="text-sm font-medium text-slate-300">Élève</label>
+                  <select
+                    name="eleve_id"
+                    required
+                    defaultValue=""
+                    className="rounded-xl border border-slate-700 bg-slate-800/60 px-3 py-2 text-slate-100 outline-none transition focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
+                  >
+                    <option value="" disabled>
+                      Choisir…
+                    </option>
+                    {eleves.map((e) => (
+                      <option key={e.id} value={e.id}>
+                        {e.prenom} {e.nom}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="flex flex-1 flex-col gap-1">
+                  <label className="text-sm font-medium text-slate-300">Type</label>
+                  <select
+                    name="type"
+                    required
+                    defaultValue="devoir"
+                    className="rounded-xl border border-slate-700 bg-slate-800/60 px-3 py-2 text-slate-100 outline-none transition focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
+                  >
+                    <option value="devoir">Devoir</option>
+                    <option value="composition">Composition</option>
+                  </select>
+                </div>
+                <div className="flex flex-1 flex-col gap-1">
+                  <label className="text-sm font-medium text-slate-300">Semestre</label>
+                  <select
+                    name="semestre"
+                    required
+                    defaultValue="1"
+                    className="rounded-xl border border-slate-700 bg-slate-800/60 px-3 py-2 text-slate-100 outline-none transition focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
+                  >
+                    <option value="1">1ᵉʳ semestre</option>
+                    <option value="2">2ᵉ semestre</option>
+                  </select>
+                </div>
+              </div>
 
-          <ul className="flex flex-col gap-4">
-            {eleves.map((e) => (
-              <li
-                key={e.id}
-                className="rounded-2xl border border-gray-200 bg-white p-4"
-              >
-                <form action={enregistrerAppreciation} className="flex flex-col gap-2">
-                  <input type="hidden" name="affectation_id" value={affectation.id} />
-                  <input type="hidden" name="eleve_id" value={e.id} />
-                  <input type="hidden" name="semestre" value={semestreAppreciation} />
-                  <label className="text-sm font-medium text-gray-900">
-                    {e.prenom} {e.nom}
+              <div className="flex flex-col gap-4 sm:flex-row">
+                <div className="flex flex-1 flex-col gap-1">
+                  <label className="text-sm font-medium text-slate-300">
+                    Titre (facultatif)
                   </label>
-                  <textarea
-                    name="texte"
-                    rows={2}
-                    maxLength={500}
-                    defaultValue={texteAppreciation(e.id)}
-                    placeholder="Appréciation pour ce semestre (facultatif)…"
-                    className="rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 outline-none focus:border-gray-900"
+                  <input
+                    name="titre"
+                    placeholder="Devoir 1"
+                    className="rounded-xl border border-slate-700 bg-slate-800/60 px-3 py-2 text-slate-100 placeholder:text-slate-500 outline-none transition focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
                   />
-                  <div className="flex justify-end">
-                    <button className="rounded-lg bg-gray-900 px-4 py-1.5 text-sm font-medium text-white hover:bg-gray-800">
-                      Enregistrer
-                    </button>
-                  </div>
-                </form>
-              </li>
-            ))}
-          </ul>
+                </div>
+                <div className="flex flex-1 flex-col gap-1">
+                  <label className="text-sm font-medium text-slate-300">Note / 20</label>
+                  <input
+                    name="valeur"
+                    required
+                    inputMode="decimal"
+                    placeholder="14"
+                    className="rounded-xl border border-slate-700 bg-slate-800/60 px-3 py-2 text-slate-100 placeholder:text-slate-500 outline-none transition focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
+                  />
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
+                <div className="flex flex-1 flex-col gap-1">
+                  <label className="text-sm font-medium text-slate-300">Date</label>
+                  <input
+                    name="date_evaluation"
+                    type="date"
+                    className="rounded-xl border border-slate-700 bg-slate-800/60 px-3 py-2 text-slate-100 outline-none transition focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
+                  />
+                </div>
+                <button className="rounded-xl bg-green-500 px-4 py-2 font-semibold text-slate-900 transition hover:bg-green-400">
+                  Enregistrer
+                </button>
+              </div>
+            </form>
+          </section>
+        )}
+
+        {/* Liste des notes saisies, regroupées par semestre */}
+        <section className="flex flex-col gap-8">
+          <h2 className="text-lg font-semibold text-white">
+            Notes saisies ({notes?.length ?? 0})
+          </h2>
+          {!notes || notes.length === 0 ? (
+            <p className="text-sm text-slate-400">
+              Aucune note pour l&apos;instant. Ajoutez-en une ci-dessus.
+            </p>
+          ) : (
+            notesParSemestre.map(({ semestre, liste }) => (
+              <div key={semestre}>
+                <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-400">
+                  {semestre === 1 ? "1ᵉʳ semestre" : "2ᵉ semestre"} ({liste.length})
+                </h3>
+                {liste.length === 0 ? (
+                  <p className="text-sm text-slate-500">Aucune note.</p>
+                ) : (
+                  <ul className="divide-y divide-slate-800 overflow-hidden rounded-2xl border border-slate-800 bg-slate-800/30">
+                    {liste.map((n) => (
+                      <li
+                        key={n.id}
+                        className="flex items-center justify-between gap-3 px-4 py-3"
+                      >
+                        <div>
+                          <p className="font-medium text-white">
+                            {n.eleve ? `${n.eleve.prenom} ${n.eleve.nom}` : "—"} —{" "}
+                            <span className="text-green-400">{n.valeur}/20</span>
+                          </p>
+                          <p className="text-sm text-slate-400">
+                            {n.type === "composition" ? "Composition" : "Devoir"}
+                            {n.titre ? ` « ${n.titre} »` : ""} · {n.date_evaluation}
+                          </p>
+                        </div>
+                        <form action={supprimerNote}>
+                          <input type="hidden" name="id" value={n.id} />
+                          <input type="hidden" name="affectation_id" value={affectation.id} />
+                          <button className="rounded-xl border border-slate-700 px-3 py-1.5 text-sm text-red-400 transition hover:bg-red-500/10">
+                            Supprimer
+                          </button>
+                        </form>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            ))
+          )}
         </section>
-      ) : null}
+
+        {/* Appréciations : un commentaire par élève, pour le semestre choisi */}
+        {eleves && eleves.length > 0 ? (
+          <section className="mt-10">
+            <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+              <h2 className="text-lg font-semibold text-white">Appréciations</h2>
+              {/* Choix du semestre commenté */}
+              <div className="inline-flex rounded-xl bg-slate-800/60 p-1 text-sm font-medium">
+                {([1, 2] as const).map((s) => (
+                  <Link
+                    key={s}
+                    href={`/espace/notes/${affectation.id}?app_semestre=${s}`}
+                    className={
+                      "rounded-lg px-3 py-1.5 transition " +
+                      (s === semestreAppreciation
+                        ? "bg-green-500 text-slate-900"
+                        : "text-slate-300 hover:text-white")
+                    }
+                  >
+                    {s === 1 ? "1ᵉʳ semestre" : "2ᵉ semestre"}
+                  </Link>
+                ))}
+              </div>
+            </div>
+
+            <ul className="flex flex-col gap-4">
+              {eleves.map((e) => (
+                <li
+                  key={e.id}
+                  className="rounded-2xl border border-slate-800 bg-slate-800/30 p-4"
+                >
+                  <form action={enregistrerAppreciation} className="flex flex-col gap-2">
+                    <input type="hidden" name="affectation_id" value={affectation.id} />
+                    <input type="hidden" name="eleve_id" value={e.id} />
+                    <input type="hidden" name="semestre" value={semestreAppreciation} />
+                    <label className="text-sm font-medium text-white">
+                      {e.prenom} {e.nom}
+                    </label>
+                    <textarea
+                      name="texte"
+                      rows={2}
+                      maxLength={500}
+                      defaultValue={texteAppreciation(e.id)}
+                      placeholder="Appréciation pour ce semestre (facultatif)…"
+                      className="rounded-xl border border-slate-700 bg-slate-800/60 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 outline-none transition focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
+                    />
+                    <div className="flex justify-end">
+                      <button className="rounded-xl bg-green-500 px-4 py-1.5 text-sm font-semibold text-slate-900 transition hover:bg-green-400">
+                        Enregistrer
+                      </button>
+                    </div>
+                  </form>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ) : null}
+      </div>
     </main>
   );
 }
