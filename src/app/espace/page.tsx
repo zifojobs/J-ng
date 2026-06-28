@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { requireProfil } from "@/lib/auth";
 import { logout } from "@/app/login/actions";
+import { messageEncouragement } from "./encouragements";
 
 const LIBELLE_ROLE: Record<string, string> = {
   professeur: "Professeur",
@@ -275,6 +276,28 @@ export default async function EspacePage() {
         {/* Élève : tableau de bord */}
         {bord ? (
           <>
+            {/* Mot d'encouragement (change à chaque connexion, adapté au niveau) */}
+            {(() => {
+              const mot = messageEncouragement(bord.moyenne);
+              const estSavoir = mot.type === "savoir";
+              return (
+                <div className="mb-4 flex gap-3 rounded-2xl border border-slate-800 bg-slate-800/30 p-4">
+                  <span className="text-xl" aria-hidden>
+                    {estSavoir ? "💡" : "✨"}
+                  </span>
+                  <div className="min-w-0">
+                    <p className="text-[11px] font-semibold uppercase tracking-wide text-green-400">
+                      {estSavoir ? "Le savais-tu ?" : "Pour bien commencer"}
+                    </p>
+                    <p className="mt-1 text-sm text-slate-200">{mot.texte}</p>
+                    {mot.auteur ? (
+                      <p className="mt-1 text-xs italic text-slate-500">— {mot.auteur}</p>
+                    ) : null}
+                  </div>
+                </div>
+              );
+            })()}
+
             {/* Carte verte : prochain cours */}
             {bord.prochain ? (
               <Link
