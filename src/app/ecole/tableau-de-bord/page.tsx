@@ -185,182 +185,184 @@ export default async function TableauDeBordPage({
     .returns<DernierDevoir[]>();
 
   return (
-    <main className="mx-auto max-w-4xl p-4 sm:p-8">
-      <header className="mb-8 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Tableau de bord</h1>
-          <p className="text-sm text-gray-500">
-            {profil.prenom} {profil.nom} — Administrateur
-            {anneeActive ? ` · ${anneeActive.libelle}` : ""}
-          </p>
-        </div>
-        <Link
-          href="/ecole"
-          className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-100"
-        >
-          ← Retour
-        </Link>
-      </header>
-
-      {/* Effectifs */}
-      <section className="mb-10 grid grid-cols-2 gap-3 sm:grid-cols-4">
-        {[
-          { label: "Classes", valeur: classes.length },
-          { label: "Élèves", valeur: nbEleves },
-          { label: "Professeurs", valeur: nbProfs ?? 0 },
-          { label: "Parents", valeur: nbParents ?? 0 },
-        ].map((c) => (
-          <div key={c.label} className="rounded-2xl border border-gray-200 bg-white p-4">
-            <p className="text-3xl font-bold text-gray-900">{c.valeur}</p>
-            <p className="text-sm text-gray-500">{c.label}</p>
+    <main className="min-h-screen bg-slate-900 px-4 py-8 sm:px-8">
+      <div className="mx-auto max-w-4xl">
+        <header className="mb-8 flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-white">Tableau de bord</h1>
+            <p className="text-sm text-slate-400">
+              {profil.prenom} {profil.nom} — Administrateur
+              {anneeActive ? ` · ${anneeActive.libelle}` : ""}
+            </p>
           </div>
-        ))}
-      </section>
+          <Link
+            href="/ecole"
+            className="rounded-xl border border-slate-700 px-3 py-1.5 text-sm text-slate-300 transition hover:bg-slate-800"
+          >
+            ← Retour
+          </Link>
+        </header>
 
-      {/* Sélecteur de semestre (pour les moyennes) */}
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-lg font-semibold text-gray-900">Moyennes par classe</h2>
-        <div className="inline-flex overflow-hidden rounded-lg border border-gray-300 text-sm">
-          {([1, 2] as const).map((s) => (
-            <Link
-              key={s}
-              href={`/ecole/tableau-de-bord?semestre=${s}`}
-              className={
-                "px-3 py-1.5 " +
-                (s === sem
-                  ? "bg-gray-900 font-medium text-white"
-                  : "bg-white text-gray-700 hover:bg-gray-100")
-              }
-            >
-              {s === 1 ? "1ᵉʳ semestre" : "2ᵉ semestre"}
-            </Link>
-          ))}
-        </div>
-      </div>
-
-      {/* Moyennes par classe */}
-      <section className="mb-10">
-        {moyennesParClasse.length === 0 ? (
-          <p className="rounded-lg bg-gray-50 px-4 py-3 text-sm text-gray-500">
-            Aucune classe pour l&apos;année en cours.
-          </p>
-        ) : (
-          <ul className="divide-y divide-gray-200 overflow-hidden rounded-2xl border border-gray-200 bg-white">
-            {moyennesParClasse.map((c) => (
-              <li
-                key={c.id}
-                className="flex items-center justify-between gap-3 px-4 py-3"
-              >
-                <div>
-                  <p className="font-medium text-gray-900">{c.nom}</p>
-                  <p className="text-sm text-gray-500">
-                    {c.effectif} élève{c.effectif > 1 ? "s" : ""} ·{" "}
-                    {c.notes} noté{c.notes > 1 ? "s" : ""} ce {libelleSemestre.toLowerCase()}
-                  </p>
-                </div>
-                <span
-                  className={
-                    "rounded-lg px-3 py-1 text-sm font-semibold " +
-                    (c.moyenne === null
-                      ? "bg-gray-100 text-gray-400"
-                      : c.moyenne >= 10
-                        ? "bg-green-50 text-green-700"
-                        : "bg-red-50 text-red-700")
-                  }
-                >
-                  {c.moyenne !== null ? `${c.moyenne.toFixed(2)}/20` : "—"}
-                </span>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
-
-      {/* Absences */}
-      <section className="mb-10">
-        <h2 className="mb-4 text-lg font-semibold text-gray-900">Absences</h2>
-        <div className="mb-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+        {/* Effectifs */}
+        <section className="mb-10 grid grid-cols-2 gap-3 sm:grid-cols-4">
           {[
-            { label: "Absences", valeur: totalAbsents },
-            { label: "Retards", valeur: totalRetards },
-            { label: "Justifiées", valeur: totalJustifies },
-            {
-              label: "Part justifiée",
-              valeur: partJustifiee !== null ? `${partJustifiee}%` : "—",
-            },
+            { label: "Classes", valeur: classes.length },
+            { label: "Élèves", valeur: nbEleves },
+            { label: "Professeurs", valeur: nbProfs ?? 0 },
+            { label: "Parents", valeur: nbParents ?? 0 },
           ].map((c) => (
-            <div key={c.label} className="rounded-2xl border border-gray-200 bg-white p-4">
-              <p className="text-2xl font-bold text-gray-900">{c.valeur}</p>
-              <p className="text-sm text-gray-500">{c.label}</p>
+            <div key={c.label} className="rounded-2xl border border-slate-800 bg-slate-800/30 p-4">
+              <p className="text-3xl font-bold text-white">{c.valeur}</p>
+              <p className="text-sm text-slate-400">{c.label}</p>
             </div>
           ))}
-        </div>
-        {classesAbsences.length > 0 ? (
-          <ul className="divide-y divide-gray-200 overflow-hidden rounded-2xl border border-gray-200 bg-white">
-            {classesAbsences.map((c) => (
-              <li
-                key={c.nom}
-                className="flex items-center justify-between gap-3 px-4 py-2.5"
-              >
-                <span className="font-medium text-gray-900">{c.nom}</span>
-                <span className="text-sm text-gray-600">
-                  {c.total} absence{c.total > 1 ? "s" : ""}/retard{c.total > 1 ? "s" : ""}
-                </span>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="rounded-lg bg-gray-50 px-4 py-3 text-sm text-gray-500">
-            Aucune absence enregistrée. 🎉
-          </p>
-        )}
-      </section>
+        </section>
 
-      {/* Dernière activité */}
-      <section className="grid gap-6 sm:grid-cols-2">
-        <div>
-          <h2 className="mb-3 text-lg font-semibold text-gray-900">Dernières notes</h2>
-          {!dernieresNotes || dernieresNotes.length === 0 ? (
-            <p className="rounded-lg bg-gray-50 px-4 py-3 text-sm text-gray-500">
-              Aucune note saisie.
+        {/* Sélecteur de semestre (pour les moyennes) */}
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+          <h2 className="text-lg font-semibold text-white">Moyennes par classe</h2>
+          <div className="inline-flex rounded-xl bg-slate-800/60 p-1 text-sm font-medium">
+            {([1, 2] as const).map((s) => (
+              <Link
+                key={s}
+                href={`/ecole/tableau-de-bord?semestre=${s}`}
+                className={
+                  "rounded-lg px-3 py-1.5 transition " +
+                  (s === sem
+                    ? "bg-green-500 text-slate-900"
+                    : "text-slate-300 hover:text-white")
+                }
+              >
+                {s === 1 ? "1ᵉʳ semestre" : "2ᵉ semestre"}
+              </Link>
+            ))}
+          </div>
+        </div>
+
+        {/* Moyennes par classe */}
+        <section className="mb-10">
+          {moyennesParClasse.length === 0 ? (
+            <p className="rounded-2xl border border-slate-800 bg-slate-800/30 px-4 py-3 text-sm text-slate-400">
+              Aucune classe pour l&apos;année en cours.
             </p>
           ) : (
-            <ul className="divide-y divide-gray-200 overflow-hidden rounded-2xl border border-gray-200 bg-white">
-              {dernieresNotes.map((n, i) => (
-                <li key={i} className="px-4 py-2.5">
-                  <p className="font-medium text-gray-900">
-                    {n.eleve ? `${n.eleve.prenom} ${n.eleve.nom}` : "—"} —{" "}
-                    {n.valeur}/20
-                  </p>
-                  <p className="text-sm text-gray-500">
-                    {n.affectation?.matiere?.nom ?? "—"} · {n.date_evaluation}
-                  </p>
+            <ul className="divide-y divide-slate-800 overflow-hidden rounded-2xl border border-slate-800 bg-slate-800/30">
+              {moyennesParClasse.map((c) => (
+                <li
+                  key={c.id}
+                  className="flex items-center justify-between gap-3 px-4 py-3"
+                >
+                  <div>
+                    <p className="font-medium text-white">{c.nom}</p>
+                    <p className="text-sm text-slate-400">
+                      {c.effectif} élève{c.effectif > 1 ? "s" : ""} ·{" "}
+                      {c.notes} noté{c.notes > 1 ? "s" : ""} ce {libelleSemestre.toLowerCase()}
+                    </p>
+                  </div>
+                  <span
+                    className={
+                      "rounded-lg px-3 py-1 text-sm font-semibold " +
+                      (c.moyenne === null
+                        ? "bg-slate-700/50 text-slate-400"
+                        : c.moyenne >= 10
+                          ? "bg-green-500/10 text-green-300"
+                          : "bg-red-500/10 text-red-300")
+                    }
+                  >
+                    {c.moyenne !== null ? `${c.moyenne.toFixed(2)}/20` : "—"}
+                  </span>
                 </li>
               ))}
             </ul>
           )}
-        </div>
-        <div>
-          <h2 className="mb-3 text-lg font-semibold text-gray-900">Derniers devoirs</h2>
-          {!derniersDevoirs || derniersDevoirs.length === 0 ? (
-            <p className="rounded-lg bg-gray-50 px-4 py-3 text-sm text-gray-500">
-              Aucun devoir donné.
-            </p>
-          ) : (
-            <ul className="divide-y divide-gray-200 overflow-hidden rounded-2xl border border-gray-200 bg-white">
-              {derniersDevoirs.map((d, i) => (
-                <li key={i} className="px-4 py-2.5">
-                  <p className="font-medium text-gray-900">{d.titre}</p>
-                  <p className="text-sm text-gray-500">
-                    {d.affectation?.matiere?.nom ?? "—"}
-                    {d.affectation?.classe ? ` · ${d.affectation.classe.nom}` : ""}
-                  </p>
+        </section>
+
+        {/* Absences */}
+        <section className="mb-10">
+          <h2 className="mb-4 text-lg font-semibold text-white">Absences</h2>
+          <div className="mb-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+            {[
+              { label: "Absences", valeur: totalAbsents },
+              { label: "Retards", valeur: totalRetards },
+              { label: "Justifiées", valeur: totalJustifies },
+              {
+                label: "Part justifiée",
+                valeur: partJustifiee !== null ? `${partJustifiee}%` : "—",
+              },
+            ].map((c) => (
+              <div key={c.label} className="rounded-2xl border border-slate-800 bg-slate-800/30 p-4">
+                <p className="text-2xl font-bold text-white">{c.valeur}</p>
+                <p className="text-sm text-slate-400">{c.label}</p>
+              </div>
+            ))}
+          </div>
+          {classesAbsences.length > 0 ? (
+            <ul className="divide-y divide-slate-800 overflow-hidden rounded-2xl border border-slate-800 bg-slate-800/30">
+              {classesAbsences.map((c) => (
+                <li
+                  key={c.nom}
+                  className="flex items-center justify-between gap-3 px-4 py-2.5"
+                >
+                  <span className="font-medium text-white">{c.nom}</span>
+                  <span className="text-sm text-slate-400">
+                    {c.total} absence{c.total > 1 ? "s" : ""}/retard{c.total > 1 ? "s" : ""}
+                  </span>
                 </li>
               ))}
             </ul>
+          ) : (
+            <p className="rounded-2xl border border-slate-800 bg-slate-800/30 px-4 py-3 text-sm text-slate-400">
+              Aucune absence enregistrée. 🎉
+            </p>
           )}
-        </div>
-      </section>
+        </section>
+
+        {/* Dernière activité */}
+        <section className="grid gap-6 sm:grid-cols-2">
+          <div>
+            <h2 className="mb-3 text-lg font-semibold text-white">Dernières notes</h2>
+            {!dernieresNotes || dernieresNotes.length === 0 ? (
+              <p className="rounded-2xl border border-slate-800 bg-slate-800/30 px-4 py-3 text-sm text-slate-400">
+                Aucune note saisie.
+              </p>
+            ) : (
+              <ul className="divide-y divide-slate-800 overflow-hidden rounded-2xl border border-slate-800 bg-slate-800/30">
+                {dernieresNotes.map((n, i) => (
+                  <li key={i} className="px-4 py-2.5">
+                    <p className="font-medium text-white">
+                      {n.eleve ? `${n.eleve.prenom} ${n.eleve.nom}` : "—"} —{" "}
+                      {n.valeur}/20
+                    </p>
+                    <p className="text-sm text-slate-400">
+                      {n.affectation?.matiere?.nom ?? "—"} · {n.date_evaluation}
+                    </p>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+          <div>
+            <h2 className="mb-3 text-lg font-semibold text-white">Derniers devoirs</h2>
+            {!derniersDevoirs || derniersDevoirs.length === 0 ? (
+              <p className="rounded-2xl border border-slate-800 bg-slate-800/30 px-4 py-3 text-sm text-slate-400">
+                Aucun devoir donné.
+              </p>
+            ) : (
+              <ul className="divide-y divide-slate-800 overflow-hidden rounded-2xl border border-slate-800 bg-slate-800/30">
+                {derniersDevoirs.map((d, i) => (
+                  <li key={i} className="px-4 py-2.5">
+                    <p className="font-medium text-white">{d.titre}</p>
+                    <p className="text-sm text-slate-400">
+                      {d.affectation?.matiere?.nom ?? "—"}
+                      {d.affectation?.classe ? ` · ${d.affectation.classe.nom}` : ""}
+                    </p>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </section>
+      </div>
     </main>
   );
 }

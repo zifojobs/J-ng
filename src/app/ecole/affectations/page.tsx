@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { redirect } from "next/navigation";
 import { requireProfil } from "@/lib/auth";
 import { ajouterAffectation, supprimerAffectation } from "./actions";
@@ -80,40 +80,40 @@ export default async function AffectationsPage({
     (classes?.length ?? 0) > 0;
 
   return (
-    <main className="mx-auto max-w-3xl p-4 sm:p-8">
+    <main className="min-h-screen bg-slate-900 px-4 py-8 sm:px-8"><div className="mx-auto max-w-3xl">
       <header className="mb-8 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Affectations</h1>
-          <p className="text-sm text-gray-500">
+          <h1 className="text-2xl font-bold text-white">Affectations</h1>
+          <p className="text-sm text-slate-400">
             {profil.prenom} {profil.nom} — Administrateur
           </p>
         </div>
         <Link
           href="/ecole"
-          className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-100"
+          className="rounded-xl border border-slate-700 px-3 py-1.5 text-sm text-slate-300 transition hover:bg-slate-800"
         >
           ← Retour
         </Link>
       </header>
 
-      <p className="mb-6 text-sm text-gray-500">
+      <p className="mb-6 text-sm text-slate-400">
         Indiquez qui enseigne quoi, et dans quelle classe. Exemple : « M. Diop —
         Mathématiques — 6ème A ».
       </p>
 
       {succes ? (
-        <p className="mb-4 rounded-lg bg-green-50 px-3 py-2 text-sm text-green-700">
+        <p className="mb-4 rounded-xl border border-green-500/30 bg-green-500/10 px-3 py-2 text-sm text-green-300">
           {succes}
         </p>
       ) : null}
       {erreur ? (
-        <p className="mb-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
+        <p className="mb-4 rounded-xl border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-300">
           {erreur}
         </p>
       ) : null}
 
       {!pretAAffecter ? (
-        <p className="mb-8 rounded-lg bg-amber-50 px-4 py-3 text-sm text-amber-800">
+        <p className="mb-8 rounded-2xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-200">
           Pour créer une affectation, il faut au moins un{" "}
           <Link href="/ecole/professeurs" className="font-medium underline">
             professeur
@@ -130,19 +130,19 @@ export default async function AffectationsPage({
         </p>
       ) : (
         /* Formulaire d'ajout d'une affectation */
-        <section className="mb-10 rounded-2xl border border-gray-200 bg-white p-6">
-          <h2 className="mb-4 text-lg font-semibold text-gray-900">
+        <section className="mb-10 rounded-2xl border border-slate-800 bg-slate-800/30 p-6">
+          <h2 className="mb-4 text-lg font-semibold text-white">
             Ajouter une affectation
           </h2>
           <form action={ajouterAffectation} className="flex flex-col gap-4">
             <div className="flex flex-col gap-4 sm:flex-row">
               <div className="flex flex-1 flex-col gap-1">
-                <label className="text-sm font-medium text-gray-700">Professeur</label>
+                <label className="text-sm font-medium text-slate-300">Professeur</label>
                 <select
                   name="professeur_id"
                   required
                   defaultValue=""
-                  className="rounded-lg border border-gray-300 px-3 py-2 text-gray-900 outline-none focus:border-gray-900"
+                  className="rounded-xl border border-slate-700 bg-slate-800/60 px-3 py-2 text-slate-100 placeholder:text-slate-500 outline-none transition focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
                 >
                   <option value="" disabled>
                     Choisir…
@@ -155,12 +155,12 @@ export default async function AffectationsPage({
                 </select>
               </div>
               <div className="flex flex-1 flex-col gap-1">
-                <label className="text-sm font-medium text-gray-700">Matière</label>
+                <label className="text-sm font-medium text-slate-300">Matière</label>
                 <select
                   name="matiere_id"
                   required
                   defaultValue=""
-                  className="rounded-lg border border-gray-300 px-3 py-2 text-gray-900 outline-none focus:border-gray-900"
+                  className="rounded-xl border border-slate-700 bg-slate-800/60 px-3 py-2 text-slate-100 placeholder:text-slate-500 outline-none transition focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
                 >
                   <option value="" disabled>
                     Choisir…
@@ -173,12 +173,12 @@ export default async function AffectationsPage({
                 </select>
               </div>
               <div className="flex flex-1 flex-col gap-1">
-                <label className="text-sm font-medium text-gray-700">Classe</label>
+                <label className="text-sm font-medium text-slate-300">Classe</label>
                 <select
                   name="classe_id"
                   required
                   defaultValue=""
-                  className="rounded-lg border border-gray-300 px-3 py-2 text-gray-900 outline-none focus:border-gray-900"
+                  className="rounded-xl border border-slate-700 bg-slate-800/60 px-3 py-2 text-slate-100 placeholder:text-slate-500 outline-none transition focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
                 >
                   <option value="" disabled>
                     Choisir…
@@ -192,7 +192,7 @@ export default async function AffectationsPage({
               </div>
             </div>
             <div>
-              <button className="rounded-lg bg-gray-900 px-4 py-2 font-medium text-white hover:bg-gray-800">
+              <button className="rounded-xl bg-green-500 px-4 py-2 font-semibold text-slate-900 transition hover:bg-green-400">
                 Ajouter
               </button>
             </div>
@@ -202,21 +202,21 @@ export default async function AffectationsPage({
 
       {/* Liste des affectations existantes */}
       <section>
-        <h2 className="mb-4 text-lg font-semibold text-gray-900">
+        <h2 className="mb-4 text-lg font-semibold text-white">
           Affectations ({affectations?.length ?? 0})
         </h2>
         {affectations && affectations.length > 0 ? (
-          <ul className="divide-y divide-gray-200 overflow-hidden rounded-2xl border border-gray-200 bg-white">
+          <ul className="divide-y divide-slate-800 overflow-hidden rounded-2xl border border-slate-800 bg-slate-800/30">
             {affectations.map((a) => (
               <li
                 key={a.id}
                 className="flex items-center justify-between gap-3 px-4 py-3"
               >
                 <div>
-                  <p className="font-medium text-gray-900">
+                  <p className="font-medium text-white">
                     {a.professeur ? `${a.professeur.prenom} ${a.professeur.nom}` : "—"}
                   </p>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm text-slate-400">
                     {a.matiere?.nom ?? "—"} —{" "}
                     {a.classe
                       ? a.classe.nom +
@@ -228,7 +228,7 @@ export default async function AffectationsPage({
                 </div>
                 <form action={supprimerAffectation}>
                   <input type="hidden" name="id" value={a.id} />
-                  <button className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm text-red-600 hover:bg-red-50">
+                  <button className="rounded-xl border border-slate-700 px-3 py-1.5 text-sm text-red-400 transition hover:bg-red-500/10">
                     Supprimer
                   </button>
                 </form>
@@ -236,11 +236,11 @@ export default async function AffectationsPage({
             ))}
           </ul>
         ) : (
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-slate-400">
             Aucune affectation pour le moment. Ajoutez-en une ci-dessus.
           </p>
         )}
       </section>
-    </main>
+    </div></main>
   );
 }

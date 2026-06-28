@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { redirect } from "next/navigation";
 import { requireProfil } from "@/lib/auth";
 import {
@@ -61,35 +61,35 @@ export default async function ParentsPage({
   const pasDEleve = !eleves || eleves.length === 0;
 
   return (
-    <main className="mx-auto max-w-3xl p-4 sm:p-8">
+    <main className="min-h-screen bg-slate-900 px-4 py-8 sm:px-8"><div className="mx-auto max-w-3xl">
       <header className="mb-8 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Parents</h1>
-          <p className="text-sm text-gray-500">
+          <h1 className="text-2xl font-bold text-white">Parents</h1>
+          <p className="text-sm text-slate-400">
             {profil.prenom} {profil.nom} — Administrateur
           </p>
         </div>
         <Link
           href="/ecole"
-          className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-100"
+          className="rounded-xl border border-slate-700 px-3 py-1.5 text-sm text-slate-300 transition hover:bg-slate-800"
         >
           ← Retour
         </Link>
       </header>
 
       {succes ? (
-        <p className="mb-4 rounded-lg bg-green-50 px-3 py-2 text-sm text-green-700">
+        <p className="mb-4 rounded-xl border border-green-500/30 bg-green-500/10 px-3 py-2 text-sm text-green-300">
           {succes}
         </p>
       ) : null}
       {erreur ? (
-        <p className="mb-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
+        <p className="mb-4 rounded-xl border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-300">
           {erreur}
         </p>
       ) : null}
 
       {pasDEleve ? (
-        <p className="mb-8 rounded-lg bg-amber-50 px-4 py-3 text-sm text-amber-800">
+        <p className="mb-8 rounded-2xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-200">
           Vous devez d&apos;abord inscrire des élèves avant de créer des parents.{" "}
           <Link href="/ecole/eleves" className="font-medium underline">
             Gérer les élèves
@@ -97,43 +97,43 @@ export default async function ParentsPage({
         </p>
       ) : (
         /* Création d'un parent + rattachement à un premier enfant */
-        <section className="mb-10 rounded-2xl border border-gray-200 bg-white p-6">
-          <h2 className="mb-4 text-lg font-semibold text-gray-900">Ajouter un parent</h2>
+        <section className="mb-10 rounded-2xl border border-slate-800 bg-slate-800/30 p-6">
+          <h2 className="mb-4 text-lg font-semibold text-white">Ajouter un parent</h2>
           <form action={ajouterParent} className="flex flex-col gap-4">
             <div className="flex flex-col gap-4 sm:flex-row">
               <div className="flex flex-1 flex-col gap-1">
-                <label className="text-sm font-medium text-gray-700">Prénom</label>
+                <label className="text-sm font-medium text-slate-300">Prénom</label>
                 <input
                   name="prenom"
                   required
                   placeholder="Awa"
-                  className="rounded-lg border border-gray-300 px-3 py-2 text-gray-900 outline-none focus:border-gray-900"
+                  className="rounded-xl border border-slate-700 bg-slate-800/60 px-3 py-2 text-slate-100 placeholder:text-slate-500 outline-none transition focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
                 />
               </div>
               <div className="flex flex-1 flex-col gap-1">
-                <label className="text-sm font-medium text-gray-700">Nom</label>
+                <label className="text-sm font-medium text-slate-300">Nom</label>
                 <input
                   name="nom"
                   required
                   placeholder="Sow"
-                  className="rounded-lg border border-gray-300 px-3 py-2 text-gray-900 outline-none focus:border-gray-900"
+                  className="rounded-xl border border-slate-700 bg-slate-800/60 px-3 py-2 text-slate-100 placeholder:text-slate-500 outline-none transition focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
                 />
               </div>
             </div>
             <div className="flex flex-col gap-4 sm:flex-row">
               <div className="flex flex-1 flex-col gap-1">
-                <label className="text-sm font-medium text-gray-700">
+                <label className="text-sm font-medium text-slate-300">
                   Matricule (identifiant de connexion)
                 </label>
                 <input
                   name="matricule"
                   required
                   placeholder="PAR-2026-001"
-                  className="rounded-lg border border-gray-300 px-3 py-2 text-gray-900 outline-none focus:border-gray-900"
+                  className="rounded-xl border border-slate-700 bg-slate-800/60 px-3 py-2 text-slate-100 placeholder:text-slate-500 outline-none transition focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
                 />
               </div>
               <div className="flex flex-1 flex-col gap-1">
-                <label className="text-sm font-medium text-gray-700">
+                <label className="text-sm font-medium text-slate-300">
                   Mot de passe provisoire
                 </label>
                 <input
@@ -142,17 +142,17 @@ export default async function ParentsPage({
                   required
                   minLength={6}
                   placeholder="au moins 6 caractères"
-                  className="rounded-lg border border-gray-300 px-3 py-2 text-gray-900 outline-none focus:border-gray-900"
+                  className="rounded-xl border border-slate-700 bg-slate-800/60 px-3 py-2 text-slate-100 placeholder:text-slate-500 outline-none transition focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
                 />
               </div>
             </div>
             <div className="flex flex-col gap-1">
-              <label className="text-sm font-medium text-gray-700">Enfant rattaché</label>
+              <label className="text-sm font-medium text-slate-300">Enfant rattaché</label>
               <select
                 name="eleve_id"
                 required
                 defaultValue=""
-                className="rounded-lg border border-gray-300 px-3 py-2 text-gray-900 outline-none focus:border-gray-900"
+                className="rounded-xl border border-slate-700 bg-slate-800/60 px-3 py-2 text-slate-100 placeholder:text-slate-500 outline-none transition focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
               >
                 <option value="" disabled>
                   Choisir…
@@ -164,12 +164,12 @@ export default async function ParentsPage({
                 ))}
               </select>
             </div>
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-slate-500">
               Le parent se connectera avec son <strong>matricule</strong> et ce mot de
               passe (vous pourrez rattacher d&apos;autres enfants ensuite).
             </p>
             <div>
-              <button className="rounded-lg bg-gray-900 px-4 py-2 font-medium text-white hover:bg-gray-800">
+              <button className="rounded-xl bg-green-500 px-4 py-2 font-semibold text-slate-900 transition hover:bg-green-400">
                 Ajouter le parent
               </button>
             </div>
@@ -179,7 +179,7 @@ export default async function ParentsPage({
 
       {/* Liste des parents */}
       <section>
-        <h2 className="mb-4 text-lg font-semibold text-gray-900">
+        <h2 className="mb-4 text-lg font-semibold text-white">
           Parents ({parents?.length ?? 0})
         </h2>
         {parents && parents.length > 0 ? (
@@ -187,26 +187,26 @@ export default async function ParentsPage({
             {parents.map((p) => (
               <li
                 key={p.id}
-                className="rounded-2xl border border-gray-200 bg-white p-4"
+                className="rounded-2xl border border-slate-800 bg-slate-800/30 p-4"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <p className="font-medium text-gray-900">
+                    <p className="font-medium text-white">
                       {p.prenom} {p.nom}
                     </p>
-                    <p className="text-sm text-gray-500">Matricule : {p.identifiant}</p>
+                    <p className="text-sm text-slate-400">Matricule : {p.identifiant}</p>
                   </div>
                   <form action={supprimerParent}>
                     <input type="hidden" name="id" value={p.id} />
-                    <button className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm text-red-600 hover:bg-red-50">
+                    <button className="rounded-xl border border-slate-700 px-3 py-1.5 text-sm text-red-400 transition hover:bg-red-500/10">
                       Supprimer
                     </button>
                   </form>
                 </div>
 
                 {/* Enfants liés */}
-                <div className="mt-3 border-t border-gray-100 pt-3">
-                  <p className="mb-2 text-xs font-medium uppercase tracking-wide text-gray-400">
+                <div className="mt-3 border-t border-slate-800 pt-3">
+                  <p className="mb-2 text-xs font-medium uppercase tracking-wide text-slate-500">
                     Enfants
                   </p>
                   {p.parents_eleves.length > 0 ? (
@@ -216,7 +216,7 @@ export default async function ParentsPage({
                           key={lien.id}
                           className="flex items-center justify-between gap-3 text-sm"
                         >
-                          <span className="text-gray-900">
+                          <span className="text-white">
                             {lien.eleve
                               ? `${lien.eleve.prenom} ${lien.eleve.nom}`
                               : "—"}
@@ -231,7 +231,7 @@ export default async function ParentsPage({
                       ))}
                     </ul>
                   ) : (
-                    <p className="text-sm text-gray-500">Aucun enfant rattaché.</p>
+                    <p className="text-sm text-slate-400">Aucun enfant rattaché.</p>
                   )}
 
                   {/* Rattacher un autre enfant */}
@@ -245,7 +245,7 @@ export default async function ParentsPage({
                         name="eleve_id"
                         required
                         defaultValue=""
-                        className="flex-1 rounded-lg border border-gray-300 px-3 py-1.5 text-sm text-gray-900 outline-none focus:border-gray-900"
+                        className="flex-1 rounded-xl border border-slate-700 bg-slate-800/60 px-3 py-1.5 text-sm text-slate-100 placeholder:text-slate-500 outline-none transition focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
                       >
                         <option value="" disabled>
                           Rattacher un enfant…
@@ -256,7 +256,7 @@ export default async function ParentsPage({
                           </option>
                         ))}
                       </select>
-                      <button className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-100">
+                      <button className="rounded-xl border border-slate-700 px-3 py-1.5 text-sm text-slate-300 transition hover:bg-slate-800">
                         Rattacher
                       </button>
                     </form>
@@ -266,9 +266,9 @@ export default async function ParentsPage({
             ))}
           </ul>
         ) : (
-          <p className="text-sm text-gray-500">Aucun parent pour le moment.</p>
+          <p className="text-sm text-slate-400">Aucun parent pour le moment.</p>
         )}
       </section>
-    </main>
+    </div></main>
   );
 }

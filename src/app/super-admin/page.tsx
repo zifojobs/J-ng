@@ -1,4 +1,4 @@
-import { redirect } from "next/navigation";
+﻿import { redirect } from "next/navigation";
 import { requireProfil } from "@/lib/auth";
 import { logout } from "@/app/login/actions";
 import {
@@ -55,39 +55,39 @@ export default async function SuperAdminPage({
     .returns<Demande[]>();
 
   return (
-    <main className="mx-auto max-w-3xl p-4 sm:p-8">
+    <main className="min-h-screen bg-slate-900 px-4 py-8 sm:px-8"><div className="mx-auto max-w-3xl">
       <header className="mb-8 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Espace super-admin</h1>
-          <p className="text-sm text-gray-500">
+          <h1 className="text-2xl font-bold text-white">Espace super-admin</h1>
+          <p className="text-sm text-slate-400">
             Connecté : {profil.prenom} {profil.nom}
           </p>
         </div>
         <form action={logout}>
-          <button className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-100">
+          <button className="rounded-xl border border-slate-700 px-3 py-1.5 text-sm text-slate-300 transition hover:bg-slate-800">
             Se déconnecter
           </button>
         </form>
       </header>
 
       {succes ? (
-        <p className="mb-4 rounded-lg bg-green-50 px-3 py-2 text-sm text-green-700">
+        <p className="mb-4 rounded-xl border border-green-500/30 bg-green-500/10 px-3 py-2 text-sm text-green-300">
           {succes}
         </p>
       ) : null}
       {erreur ? (
-        <p className="mb-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
+        <p className="mb-4 rounded-xl border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-300">
           {erreur}
         </p>
       ) : null}
 
       {/* Demandes d'inscription en attente */}
       <section className="mb-10">
-        <h2 className="mb-4 text-lg font-semibold text-gray-900">
+        <h2 className="mb-4 text-lg font-semibold text-white">
           Demandes d&apos;inscription ({demandes?.length ?? 0})
         </h2>
         {!demandes || demandes.length === 0 ? (
-          <p className="rounded-lg bg-gray-50 px-4 py-3 text-sm text-gray-500">
+          <p className="rounded-2xl border border-slate-800 bg-slate-800/30 px-4 py-3 text-sm text-slate-400">
             Aucune demande en attente.
           </p>
         ) : (
@@ -95,17 +95,17 @@ export default async function SuperAdminPage({
             {demandes.map((d) => (
               <li
                 key={d.id}
-                className="rounded-2xl border border-amber-200 bg-amber-50/40 p-5"
+                className="rounded-2xl border border-amber-500/30 bg-amber-500/10 p-5"
               >
                 <div className="mb-3">
-                  <p className="font-semibold text-gray-900">{d.nom_ecole}</p>
-                  <p className="text-sm text-gray-600">
+                  <p className="font-semibold text-white">{d.nom_ecole}</p>
+                  <p className="text-sm text-slate-400">
                     {d.contact_prenom} {d.contact_nom} · {d.contact_email}
                     {d.contact_telephone ? ` · ${d.contact_telephone}` : ""}
                     {d.ville ? ` · ${d.ville}` : ""}
                   </p>
                   {d.message ? (
-                    <p className="mt-2 whitespace-pre-wrap text-sm italic text-gray-600">
+                    <p className="mt-2 whitespace-pre-wrap text-sm italic text-slate-400">
                       « {d.message} »
                     </p>
                   ) : null}
@@ -114,50 +114,50 @@ export default async function SuperAdminPage({
                 {/* Créer l'école à partir de cette demande */}
                 <form
                   action={creerEcoleDepuisDemande}
-                  className="grid gap-3 rounded-xl bg-white p-4 sm:grid-cols-2"
+                  className="grid gap-3 rounded-xl border border-slate-700 bg-slate-900/50 p-4 sm:grid-cols-2"
                 >
                   <input type="hidden" name="demande_id" value={d.id} />
                   <div className="flex flex-col gap-1 sm:col-span-2">
-                    <label className="text-xs font-medium text-gray-600">
+                    <label className="text-xs font-medium text-slate-400">
                       Nom de l&apos;école
                     </label>
                     <input
                       name="nom_ecole"
                       required
                       defaultValue={d.nom_ecole}
-                      className="rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 outline-none focus:border-gray-900"
+                      className="rounded-xl border border-slate-700 bg-slate-800/60 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 outline-none transition focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
                     />
                   </div>
                   <div className="flex flex-col gap-1">
-                    <label className="text-xs font-medium text-gray-600">Prénom admin</label>
+                    <label className="text-xs font-medium text-slate-400">Prénom admin</label>
                     <input
                       name="admin_prenom"
                       required
                       defaultValue={d.contact_prenom}
-                      className="rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 outline-none focus:border-gray-900"
+                      className="rounded-xl border border-slate-700 bg-slate-800/60 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 outline-none transition focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
                     />
                   </div>
                   <div className="flex flex-col gap-1">
-                    <label className="text-xs font-medium text-gray-600">Nom admin</label>
+                    <label className="text-xs font-medium text-slate-400">Nom admin</label>
                     <input
                       name="admin_nom"
                       required
                       defaultValue={d.contact_nom}
-                      className="rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 outline-none focus:border-gray-900"
+                      className="rounded-xl border border-slate-700 bg-slate-800/60 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 outline-none transition focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
                     />
                   </div>
                   <div className="flex flex-col gap-1">
-                    <label className="text-xs font-medium text-gray-600">Email admin</label>
+                    <label className="text-xs font-medium text-slate-400">Email admin</label>
                     <input
                       name="admin_email"
                       type="email"
                       required
                       defaultValue={d.contact_email}
-                      className="rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 outline-none focus:border-gray-900"
+                      className="rounded-xl border border-slate-700 bg-slate-800/60 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 outline-none transition focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
                     />
                   </div>
                   <div className="flex flex-col gap-1">
-                    <label className="text-xs font-medium text-gray-600">
+                    <label className="text-xs font-medium text-slate-400">
                       Mot de passe de départ
                     </label>
                     <input
@@ -166,11 +166,11 @@ export default async function SuperAdminPage({
                       required
                       minLength={6}
                       placeholder="min. 6 caractères"
-                      className="rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 outline-none focus:border-gray-900"
+                      className="rounded-xl border border-slate-700 bg-slate-800/60 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 outline-none transition focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
                     />
                   </div>
                   <div className="flex items-end gap-2 sm:col-span-2">
-                    <button className="rounded-lg bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-800">
+                    <button className="rounded-xl bg-green-500 px-4 py-2 text-sm font-semibold text-slate-900 transition hover:bg-green-400">
                       Créer l&apos;école
                     </button>
                   </div>
@@ -179,7 +179,7 @@ export default async function SuperAdminPage({
                 {/* Rejeter la demande */}
                 <form action={rejeterDemande} className="mt-2 flex justify-end">
                   <input type="hidden" name="demande_id" value={d.id} />
-                  <button className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm text-red-600 hover:bg-red-50">
+                  <button className="rounded-xl border border-slate-700 px-3 py-1.5 text-sm text-red-400 transition hover:bg-red-500/10">
                     Rejeter
                   </button>
                 </form>
@@ -190,59 +190,59 @@ export default async function SuperAdminPage({
       </section>
 
       {/* Formulaire de création d'une école + son admin */}
-      <section className="mb-10 rounded-2xl border border-gray-200 bg-white p-6">
-        <h2 className="mb-4 text-lg font-semibold text-gray-900">
+      <section className="mb-10 rounded-2xl border border-slate-800 bg-slate-800/30 p-6">
+        <h2 className="mb-4 text-lg font-semibold text-white">
           Créer une école
         </h2>
         <form action={creerEcoleEtAdmin} className="grid gap-4 sm:grid-cols-2">
           <div className="flex flex-col gap-1 sm:col-span-2">
-            <label className="text-sm font-medium text-gray-700">
+            <label className="text-sm font-medium text-slate-300">
               Nom de l&apos;école
             </label>
             <input
               name="nom_ecole"
               required
               placeholder="Collège Jàng de Dakar"
-              className="rounded-lg border border-gray-300 px-3 py-2 text-gray-900 outline-none focus:border-gray-900"
+              className="rounded-xl border border-slate-700 bg-slate-800/60 px-3 py-2 text-slate-100 placeholder:text-slate-500 outline-none transition focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
             />
           </div>
 
           <div className="flex flex-col gap-1">
-            <label className="text-sm font-medium text-gray-700">
+            <label className="text-sm font-medium text-slate-300">
               Prénom de l&apos;administrateur
             </label>
             <input
               name="admin_prenom"
               required
-              className="rounded-lg border border-gray-300 px-3 py-2 text-gray-900 outline-none focus:border-gray-900"
+              className="rounded-xl border border-slate-700 bg-slate-800/60 px-3 py-2 text-slate-100 placeholder:text-slate-500 outline-none transition focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
             />
           </div>
 
           <div className="flex flex-col gap-1">
-            <label className="text-sm font-medium text-gray-700">
+            <label className="text-sm font-medium text-slate-300">
               Nom de l&apos;administrateur
             </label>
             <input
               name="admin_nom"
               required
-              className="rounded-lg border border-gray-300 px-3 py-2 text-gray-900 outline-none focus:border-gray-900"
+              className="rounded-xl border border-slate-700 bg-slate-800/60 px-3 py-2 text-slate-100 placeholder:text-slate-500 outline-none transition focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
             />
           </div>
 
           <div className="flex flex-col gap-1">
-            <label className="text-sm font-medium text-gray-700">
+            <label className="text-sm font-medium text-slate-300">
               Email de l&apos;administrateur
             </label>
             <input
               name="admin_email"
               type="email"
               required
-              className="rounded-lg border border-gray-300 px-3 py-2 text-gray-900 outline-none focus:border-gray-900"
+              className="rounded-xl border border-slate-700 bg-slate-800/60 px-3 py-2 text-slate-100 placeholder:text-slate-500 outline-none transition focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
             />
           </div>
 
           <div className="flex flex-col gap-1">
-            <label className="text-sm font-medium text-gray-700">
+            <label className="text-sm font-medium text-slate-300">
               Mot de passe de départ
             </label>
             <input
@@ -251,12 +251,12 @@ export default async function SuperAdminPage({
               required
               minLength={6}
               placeholder="min. 6 caractères"
-              className="rounded-lg border border-gray-300 px-3 py-2 text-gray-900 outline-none focus:border-gray-900"
+              className="rounded-xl border border-slate-700 bg-slate-800/60 px-3 py-2 text-slate-100 placeholder:text-slate-500 outline-none transition focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
             />
           </div>
 
           <div className="sm:col-span-2">
-            <button className="rounded-lg bg-gray-900 px-4 py-2 font-medium text-white hover:bg-gray-800">
+            <button className="rounded-xl bg-green-500 px-4 py-2 font-semibold text-slate-900 transition hover:bg-green-400">
               Créer l&apos;école et son admin
             </button>
           </div>
@@ -265,19 +265,19 @@ export default async function SuperAdminPage({
 
       {/* Liste des écoles */}
       <section>
-        <h2 className="mb-4 text-lg font-semibold text-gray-900">
+        <h2 className="mb-4 text-lg font-semibold text-white">
           Écoles ({ecoles?.length ?? 0})
         </h2>
         {ecoles && ecoles.length > 0 ? (
-          <ul className="divide-y divide-gray-200 overflow-hidden rounded-2xl border border-gray-200 bg-white">
+          <ul className="divide-y divide-slate-800 overflow-hidden rounded-2xl border border-slate-800 bg-slate-800/30">
             {ecoles.map((e) => (
               <li
                 key={e.id}
                 className="flex flex-wrap items-center justify-between gap-3 px-4 py-3"
               >
                 <div>
-                  <p className="font-medium text-gray-900">{e.nom}</p>
-                  <p className="text-xs text-gray-500">{e.slug}</p>
+                  <p className="font-medium text-white">{e.nom}</p>
+                  <p className="text-xs text-slate-500">{e.slug}</p>
                 </div>
 
                 <div className="flex flex-col items-end gap-2">
@@ -290,26 +290,26 @@ export default async function SuperAdminPage({
                     <select
                       name="statut"
                       defaultValue={e.statut}
-                      className="rounded-lg border border-gray-300 px-2.5 py-1 text-xs text-gray-900 outline-none focus:border-gray-900"
+                      className="rounded-xl border border-slate-700 bg-slate-800/60 px-2.5 py-1 text-xs text-slate-100 outline-none transition focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
                     >
                       <option value="essai">essai</option>
                       <option value="actif">actif</option>
                       <option value="suspendu">suspendu</option>
                     </select>
-                    <button className="rounded-lg border border-gray-300 px-3 py-1 text-xs font-medium text-gray-700 hover:bg-gray-100">
+                    <button className="rounded-xl border border-slate-700 px-3 py-1 text-xs font-medium text-slate-300 transition hover:bg-slate-800">
                       Appliquer
                     </button>
                   </form>
 
                   {/* Échéance + enregistrer un paiement (prolonge l'abonnement). */}
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-slate-500">
                     Échéance :{" "}
                     {e.date_echeance ? (
                       <span
                         className={
                           e.date_echeance < aujourdhui
-                            ? "font-medium text-red-600"
-                            : "font-medium text-gray-700"
+                            ? "font-medium text-red-400"
+                            : "font-medium text-slate-300"
                         }
                       >
                         {new Date(e.date_echeance).toLocaleDateString("fr-FR")}
@@ -329,19 +329,19 @@ export default async function SuperAdminPage({
                       type="number"
                       min={0}
                       placeholder="FCFA"
-                      className="w-20 rounded-lg border border-gray-300 px-2 py-1 text-xs text-gray-900 outline-none focus:border-gray-900"
+                      className="w-20 rounded-xl border border-slate-700 bg-slate-800/60 px-2 py-1 text-xs text-slate-100 outline-none transition focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
                     />
                     <select
                       name="mois"
                       defaultValue="12"
-                      className="rounded-lg border border-gray-300 px-2 py-1 text-xs text-gray-900 outline-none focus:border-gray-900"
+                      className="rounded-xl border border-slate-700 bg-slate-800/60 px-2 py-1 text-xs text-slate-100 outline-none transition focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
                     >
                       <option value="1">+1 mois</option>
                       <option value="3">+3 mois</option>
                       <option value="6">+6 mois</option>
                       <option value="12">+12 mois</option>
                     </select>
-                    <button className="rounded-lg bg-gray-900 px-3 py-1 text-xs font-medium text-white hover:bg-gray-800">
+                    <button className="rounded-xl bg-green-500 px-3 py-1 text-xs font-semibold text-slate-900 transition hover:bg-green-400">
                       Enregistrer paiement
                     </button>
                   </form>
@@ -350,9 +350,9 @@ export default async function SuperAdminPage({
             ))}
           </ul>
         ) : (
-          <p className="text-sm text-gray-500">Aucune école pour l&apos;instant.</p>
+          <p className="text-sm text-slate-400">Aucune école pour l&apos;instant.</p>
         )}
       </section>
-    </main>
+    </div></main>
   );
 }
