@@ -34,27 +34,27 @@ export default async function SuspenduPage() {
     : null;
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-md flex-col items-center justify-center p-6 text-center">
-      <div className="rounded-2xl border border-amber-200 bg-amber-50 p-8">
-        <h1 className="text-xl font-bold text-gray-900">
+    <main className="mx-auto flex min-h-screen max-w-md flex-col items-center justify-center bg-slate-900 p-6 text-center">
+      <div className="rounded-2xl border border-amber-500/30 bg-amber-500/10 p-8">
+        <h1 className="text-xl font-bold text-white">
           {suspendu ? "Abonnement suspendu" : "Abonnement expiré"}
         </h1>
-        <p className="mt-3 text-sm text-gray-700">
+        <p className="mt-3 text-sm text-slate-200">
           L&apos;accès à <span className="font-semibold">{ecole?.nom}</span>{" "}
           {suspendu ? "est momentanément suspendu." : "est arrivé à échéance."}
         </p>
         {!suspendu && dateEcheanceFr ? (
-          <p className="mt-1 text-sm text-gray-600">
+          <p className="mt-1 text-sm text-slate-400">
             Abonnement échu le {dateEcheanceFr}.
           </p>
         ) : null}
-        <p className="mt-2 text-sm text-gray-600">
+        <p className="mt-2 text-sm text-slate-400">
           Merci de contacter l&apos;administration de la plateforme pour
           régulariser l&apos;abonnement et rétablir l&apos;accès.
         </p>
 
         <form action={logout} className="mt-6">
-          <button className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100">
+          <button className="rounded-xl border border-slate-700 px-4 py-2 text-sm font-medium text-slate-300 transition hover:bg-slate-800">
             Se déconnecter
           </button>
         </form>
