@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { requireProfil } from "@/lib/auth";
 import { destinatairesAutorises, libelleRole } from "@/lib/destinataires";
 import { envoyerMessage } from "../actions";
+import { MessageContenu } from "./MessageContenu";
 
 type Personne = {
   id: string;
@@ -130,7 +131,7 @@ export default async function ConversationPage({
                       : "border border-slate-700 bg-slate-800/60 text-slate-100")
                   }
                 >
-                  <p className="whitespace-pre-wrap text-sm">{m.contenu}</p>
+                  <MessageContenu contenu={m.contenu} deMoi={deMoi} />
                   <p
                     className={
                       "mt-1 text-right text-[11px] " +
