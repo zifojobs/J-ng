@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { requireProfil } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { envoyerEmailBienvenueDirecteur } from "@/lib/email";
 import type { createClient } from "@/lib/supabase/server";
 
 type Supabase = Awaited<ReturnType<typeof createClient>>;
@@ -112,13 +113,16 @@ export async function creerEcoleDepuisDemande(formData: FormData) {
 
   const demandeId = String(formData.get("demande_id") ?? "").trim();
   const nomEcole = String(formData.get("nom_ecole") ?? "").trim();
+  const adminPrenom = String(formData.get("admin_prenom") ?? "").trim();
+  const adminEmail = String(formData.get("admin_email") ?? "").trim().toLowerCase();
+  const adminPassword = String(formData.get("admin_password") ?? "");
 
   const erreur = await creerEcoleAdmin(supabase, {
     nomEcole,
-    prenom: String(formData.get("admin_prenom") ?? "").trim(),
+    prenom: adminPrenom,
     nom: String(formData.get("admin_nom") ?? "").trim(),
-    email: String(formData.get("admin_email") ?? "").trim().toLowerCase(),
-    password: String(formData.get("admin_password") ?? ""),
+    email: adminEmail,
+    password: adminPassword,
   });
 
   if (erreur) {
@@ -133,11 +137,21 @@ export async function creerEcoleDepuisDemande(formData: FormData) {
       .eq("id", demandeId);
   }
 
+  // Email de bienvenue au directeur (identifiants). N'empêche pas la création
+  // si l'envoi échoue : on l'indique seulement dans le message.
+  const erreurEmail = await envoyerEmailBienvenueDirecteur({
+    email: adminEmail,
+    prenom: adminPrenom,
+    nomEcole,
+    motDePasse: adminPassword,
+    slug: slugify(nomEcole),
+  });
+
   revalidatePath("/super-admin");
-  redirect(
-    "/super-admin?succes=" +
-      encodeURIComponent(`École « ${nomEcole} » créée à partir de la demande.`)
-  );
+  const message = erreurEmail
+    ? `École « ${nomEcole} » créée, mais l'email au directeur n'a pas pu être envoyé (${erreurEmail}).`
+    : `École « ${nomEcole} » créée et email de bienvenue envoyé au directeur.`;
+  redirect("/super-admin?succes=" + encodeURIComponent(message));
 }
 
 // Change le statut (abonnement) d'une école : essai / actif / suspendu.
