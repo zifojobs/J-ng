@@ -30,6 +30,19 @@ export async function ajouterEleve(formData: FormData) {
     redirect(retour + "&erreur=" + encodeURIComponent("Champs manquants ou mot de passe trop court (min. 6 caractères)."));
   }
 
+  // Garde-fou : la classe choisie appartient bien à MON école. La RLS limite la
+  // lecture de `classes` aux classes de l'école de l'admin, donc si on retrouve
+  // la ligne, c'est qu'elle est de la bonne école (empêche d'injecter l'UUID
+  // d'une classe d'une autre école).
+  const { data: classe } = await supabase
+    .from("classes")
+    .select("id")
+    .eq("id", classeId)
+    .maybeSingle();
+  if (!classe) {
+    redirect(retour + "&erreur=" + encodeURIComponent("Classe introuvable."));
+  }
+
   // Le slug de l'école sert à fabriquer l'email technique (RLS : sa propre école).
   const { data: ecole } = await supabase.from("ecoles").select("slug").single();
   if (!ecole?.slug) {

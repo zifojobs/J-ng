@@ -35,6 +35,15 @@ export default async function InscriptionPage({
             ) : null}
 
             <form action={envoyerDemande} className="grid gap-4 sm:grid-cols-2">
+              {/* Piège anti-bot : caché aux humains, souvent rempli par les robots. */}
+              <input
+                type="text"
+                name="site_web"
+                tabIndex={-1}
+                autoComplete="off"
+                aria-hidden="true"
+                className="hidden"
+              />
               <div className="flex flex-col gap-1 sm:col-span-2">
                 <label className="text-sm font-medium text-slate-300">
                   Nom de l&apos;école
