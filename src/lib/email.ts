@@ -5,7 +5,7 @@ import { Resend } from "resend";
 // La clé et l'expéditeur viennent de .env.local (RESEND_API_KEY, EMAIL_EXPEDITEUR).
 
 const EXPEDITEUR = process.env.EMAIL_EXPEDITEUR ?? "Jàng <onboarding@resend.dev>";
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://jang-theta.vercel.app";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.jang.sn";
 
 // Email de bienvenue envoyé au directeur quand sa demande d'inscription est validée.
 // Contient ses identifiants de connexion. Renvoie un message d'erreur, ou null si OK.

@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://jang-theta.vercel.app"),
+  metadataBase: new URL("https://www.jang.sn"),
   title: "Jàng — La plateforme scolaire des écoles du Sénégal",
   description:
     "Notes, bulletins, emploi du temps, devoirs, absences et messagerie : toute la vie scolaire de votre établissement, accessible sur mobile.",
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     title: "Jàng — La plateforme scolaire",
     description:
       "Toute la vie scolaire de votre établissement, sur mobile : notes, bulletins, emploi du temps, devoirs, absences, messagerie.",
-    url: "https://jang-theta.vercel.app",
+    url: "https://www.jang.sn",
     siteName: "Jàng",
     locale: "fr_FR",
     type: "website",
