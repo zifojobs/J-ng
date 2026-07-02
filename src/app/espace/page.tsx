@@ -265,11 +265,20 @@ export default async function EspacePage() {
             <div className="flex h-11 w-11 items-center justify-center rounded-full bg-green-500 font-bold text-slate-900">
               {initiales}
             </div>
-            <form action={logout}>
-              <button className="text-xs text-slate-400 transition hover:text-slate-200">
-                Se déconnecter
-              </button>
-            </form>
+            <div className="flex items-center gap-3">
+              <Link
+                href="/compte/mot-de-passe"
+                className="text-xs text-slate-400 transition hover:text-slate-200"
+              >
+                Mot de passe
+              </Link>
+              <span className="text-slate-700">·</span>
+              <form action={logout}>
+                <button className="text-xs text-slate-400 transition hover:text-slate-200">
+                  Se déconnecter
+                </button>
+              </form>
+            </div>
           </div>
         </header>
 
