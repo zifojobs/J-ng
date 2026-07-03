@@ -2,6 +2,7 @@ import React from "react";
 import Link from "next/link";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { BoutonImprimer } from "@/components/BoutonImprimer";
+import { moyennesMatiere } from "@/lib/moyennes";
 
 // Composant réutilisable : affiche le bulletin imprimable d'UN élève (par son id).
 // La sécurité (qui a le droit de voir quoi) est garantie par la base (RLS) et
@@ -27,15 +28,6 @@ type Appreciation = {
   texte: string;
   affectation: { matiere: { nom: string } | null } | null;
 };
-
-// Moyenne pondérée par les coefficients (ou null si aucune note).
-function moyenne(notes: Note[]): number | null {
-  if (notes.length === 0) return null;
-  const sommeCoef = notes.reduce((s, n) => s + Number(n.coefficient), 0);
-  if (sommeCoef === 0) return null;
-  const sommePoints = notes.reduce((s, n) => s + Number(n.valeur) * Number(n.coefficient), 0);
-  return sommePoints / sommeCoef;
-}
 
 // Appréciation générale automatique selon la moyenne générale /20.
 function mention(moy: number | null): string {
@@ -113,15 +105,17 @@ export async function Bulletin({
     parMatiere.set(nom, entree);
   }
 
-  // Pour chaque matière : moyenne /20, coefficient, et points = moyenne × coef.
+  // Pour chaque matière : moyenne des devoirs, composition, moyenne /20
+  // (= (devoirs + compo) / 2), coefficient, et points = moyenne × coef.
   const lignes = [...parMatiere.entries()]
     .sort((a, b) => a[0].localeCompare(b[0]))
     .map(([nom, { coef, notes: liste }]) => {
-      const moy = moyenne(liste);
+      const { moyDevoirs, moyCompo, moyenne: moy } = moyennesMatiere(liste);
       return {
         nom,
-        notes: liste,
         coef,
+        moyDevoirs,
+        moyCompo,
         moyenne: moy,
         points: moy === null ? null : moy * coef,
       };
@@ -256,7 +250,8 @@ export async function Bulletin({
             <thead>
               <tr className="border-y border-gray-300 text-left">
                 <th className="py-2 font-semibold text-gray-700">Matière</th>
-                <th className="py-2 text-center font-semibold text-gray-700">Détail des notes</th>
+                <th className="py-2 text-center font-semibold text-gray-700">Moy. devoirs</th>
+                <th className="py-2 text-center font-semibold text-gray-700">Compo</th>
                 <th className="py-2 text-right font-semibold text-gray-700">Moy. /20</th>
                 <th className="py-2 text-center font-semibold text-gray-700">Coef</th>
                 <th className="py-2 text-right font-semibold text-gray-700">Moy. × Coef</th>
@@ -274,7 +269,10 @@ export async function Bulletin({
                     >
                       <td className="py-2 font-medium text-gray-900">{l.nom}</td>
                       <td className="py-2 text-center text-gray-600">
-                        {l.notes.map((n) => `${n.valeur}`).join(" · ")}
+                        {l.moyDevoirs !== null ? l.moyDevoirs.toFixed(2) : "—"}
+                      </td>
+                      <td className="py-2 text-center text-gray-600">
+                        {l.moyCompo !== null ? l.moyCompo.toFixed(2) : "—"}
                       </td>
                       <td className="py-2 text-right font-semibold text-gray-900">
                         {l.moyenne !== null ? l.moyenne.toFixed(2) : "—"}
@@ -287,7 +285,7 @@ export async function Bulletin({
                     {appr ? (
                       <tr className="border-b border-gray-200">
                         <td
-                          colSpan={5}
+                          colSpan={6}
                           className="pb-2 pl-4 text-sm italic text-gray-600"
                         >
                           « {appr} »
@@ -301,7 +299,7 @@ export async function Bulletin({
             <tfoot>
               {/* Totaux : somme des points sur le maximum possible. */}
               <tr className="border-t-2 border-gray-400">
-                <td className="py-2 font-semibold text-gray-900" colSpan={3}>
+                <td className="py-2 font-semibold text-gray-900" colSpan={4}>
                   Total
                 </td>
                 <td className="py-2 text-center font-semibold text-gray-900">{totalCoef}</td>
@@ -311,7 +309,7 @@ export async function Bulletin({
               </tr>
               {/* Moyenne générale = total des points ÷ total des coefficients. */}
               <tr>
-                <td className="py-2 text-lg font-bold text-gray-900" colSpan={4}>
+                <td className="py-2 text-lg font-bold text-gray-900" colSpan={5}>
                   Moyenne générale /20
                 </td>
                 <td className="py-2 text-right text-lg font-bold text-gray-900">

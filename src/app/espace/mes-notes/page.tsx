@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { requireProfil } from "@/lib/auth";
+import { moyennesMatiere } from "@/lib/moyennes";
 
 type Note = {
   id: string;
@@ -11,14 +12,6 @@ type Note = {
   date_evaluation: string;
   affectation: { matiere: { nom: string; coefficient_defaut: number } | null } | null;
 };
-
-// Moyenne /20 d'une matière (moyenne simple des notes ; le coefficient de la
-// matière, lui, sert seulement à la moyenne générale).
-function moyenne(notes: Note[]): number | null {
-  if (notes.length === 0) return null;
-  const somme = notes.reduce((s, n) => s + Number(n.valeur), 0);
-  return somme / notes.length;
-}
 
 export default async function MesNotesPage({
   searchParams,
@@ -58,7 +51,12 @@ export default async function MesNotesPage({
   }
   const lignes = [...parMatiere.entries()]
     .sort((a, b) => a[0].localeCompare(b[0]))
-    .map(([nom, { coef, notes: liste }]) => ({ nom, coef, notes: liste, moyenne: moyenne(liste) }));
+    .map(([nom, { coef, notes: liste }]) => ({
+      nom,
+      coef,
+      notes: liste,
+      moyenne: moyennesMatiere(liste).moyenne,
+    }));
 
   // Moyenne générale = somme(moyenne × coef) ÷ somme(coef), matières notées seulement.
   const notees = lignes.filter((l) => l.moyenne !== null);

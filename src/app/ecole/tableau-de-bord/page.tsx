@@ -1,12 +1,14 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { requireProfil } from "@/lib/auth";
+import { moyennesMatiere } from "@/lib/moyennes";
 
 type Classe = { id: string; nom: string };
 type Eleve = { id: string; classe_id: string | null };
 
 // Une note agrégée : sa valeur, l'élève, sa classe et le coef de sa matière.
 type NoteAgg = {
+  type: string;
   valeur: number;
   eleve_id: string;
   affectation: {
@@ -37,22 +39,23 @@ type DernierDevoir = {
   } | null;
 };
 
-// Moyenne générale /20 d'un élève à partir de ses notes : moyenne simple par
-// matière, puis pondérée par le coefficient de la matière (même règle que le bulletin).
+// Moyenne générale /20 d'un élève à partir de ses notes : moyenne par matière
+// ((devoirs + compo) / 2), puis pondérée par le coefficient de la matière
+// (même règle que le bulletin).
 function moyenneGenerale(notes: NoteAgg[]): number | null {
-  const parMatiere = new Map<string, { coef: number; valeurs: number[] }>();
+  const parMatiere = new Map<string, { coef: number; notes: NoteAgg[] }>();
   for (const n of notes) {
     const nom = n.affectation?.matiere?.nom ?? "Autres";
     const coef = Number(n.affectation?.matiere?.coefficient_defaut ?? 1);
-    const entree = parMatiere.get(nom) ?? { coef, valeurs: [] };
-    entree.valeurs.push(Number(n.valeur));
+    const entree = parMatiere.get(nom) ?? { coef, notes: [] };
+    entree.notes.push(n);
     parMatiere.set(nom, entree);
   }
   let totalPoints = 0;
   let totalCoef = 0;
-  for (const { coef, valeurs } of parMatiere.values()) {
-    if (valeurs.length === 0) continue;
-    const moy = valeurs.reduce((s, v) => s + v, 0) / valeurs.length;
+  for (const { coef, notes: liste } of parMatiere.values()) {
+    const moy = moyennesMatiere(liste).moyenne;
+    if (moy === null) continue;
     totalPoints += moy * coef;
     totalCoef += coef;
   }
@@ -117,7 +120,7 @@ export default async function TableauDeBordPage({
   const { data: notes } = await supabase
     .from("notes")
     .select(
-      "valeur, eleve_id, affectation:affectations ( classe_id, matiere:matieres ( nom, coefficient_defaut ) )"
+      "type, valeur, eleve_id, affectation:affectations ( classe_id, matiere:matieres ( nom, coefficient_defaut ) )"
     )
     .eq("semestre", sem)
     .returns<NoteAgg[]>();
