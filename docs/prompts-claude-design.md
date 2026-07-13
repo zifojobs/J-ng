@@ -55,7 +55,7 @@ Slides :
 10. Tarifs (paliers indicatifs côté école) : petite école < 150 élèves = 40 000 F/mois ;
     moyenne 150–400 = 75 000 F ; grande > 400 = 120 000 F. Installation one-shot 50–100 000 F.
 11. Appel à l'action : « Faites entrer votre école dans le numérique » + contact + lien
-    d'inscription jang-theta.vercel.app.
+    d'inscription www.jang.sn.
 
 Mets en avant les chiffres clés et les bénéfices. Slides aérées, une idée par slide,
 visuels/icônes plutôt que de longs textes.
@@ -210,7 +210,7 @@ illustrées comment se connecter à Jàng. Fond navy premium, gros chiffres vert
 
 Contenu :
 - Titre : « Suivez la scolarité de votre enfant, depuis votre téléphone. »
-- Étape 1 : Rendez-vous sur jang-theta.vercel.app
+- Étape 1 : Rendez-vous sur www.jang.sn
 - Étape 2 : Connectez-vous avec VOTRE matricule parent + le CODE de l'école
   (les deux remis par l'établissement). Chaque parent a son propre compte, distinct
   de celui de l'enfant.
@@ -257,4 +257,102 @@ Direction artistique (anti-générique — le plus important) :
 
 Donne 2 ou 3 directions différentes de HERO pour que je choisisse, puis la page complète dans
 la direction la plus forte. Format desktop large + une variante mobile du hero.
+```
+
+---
+
+## 7) Vidéo / animation de promotion (~60 s, 16:9)
+
+> NB : Claude Design produit une ANIMATION web (HTML/CSS/JS) qui se joue dans le navigateur,
+> sans son. Pour la version avec voix off, la vidéo MP4 officielle est générée dans le repo
+> (`promo-video/`). Ce prompt sert à obtenir une variante animée (site, salon, écran d'accueil)
+> ou à re-générer l'animation seule.
+
+```
+[COLLER LE BLOC DE MARQUE]
+
+Crée une ANIMATION DE PROMOTION plein écran, format 16:9 (1920×1080), durée ~60 secondes,
+qui se joue toute seule (autoplay, pas de scroll) et se termine sur un écran d'appel à
+l'action. C'est un mini-film de présentation de Jàng, découpé en 8 scènes enchaînées par
+de vraies transitions (fondus avec flou, glissements verticaux — JAMAIS de coupes sèches).
+
+Direction artistique : navy profond avec profondeur (glow vert diffus, constellation de
+points lumineux reliés — le fil conducteur « le savoir comme lumière »), accents verts
+#22c55e, typographie éditoriale à fort contraste de graisses, éléments qui respirent
+(animations d'ambiance lentes). Chaque scène : un fond texturé, un message central, et des
+détails premium (étiquettes, filets, badges). Grands titres (≥ 70px), une idée par scène.
+
+Les 8 scènes (avec le texte affiché à l'écran) :
+1. ACCROCHE (~6 s) — Question plein écran : « Et si toute la vie de votre école tenait
+   dans votre poche ? » sur fond constellation, noms de matières qui scintillent en étoiles
+   (✦ Mathématiques, ✦ Français, ✦ Sciences…).
+2. LE PROBLÈME (~8 s) — 3 constats qui tombent en cascade : « Des notes sur des cahiers » /
+   « Des bulletins recopiés à la main » / « Des parents tenus à l'écart ». Ambiance plus
+   sombre, accents ambre.
+3. LA RÉVÉLATION (~7 s) — Le logo J claque à l'écran avec son halo vert, « Jàng », puis
+   « La plateforme scolaire tout-en-un, pensée pour le Sénégal » + badge « “Jàng” —
+   apprendre, en wolof ». Téléphone avec l'app qui glisse depuis la droite. Moment fort.
+4. NOTES & BULLETINS (~8 s) — Écran scindé : à gauche « Du carnet de notes au bulletin
+   officiel, sans recopie » (moyennes, rangs, mentions calculés automatiquement) ; à droite
+   une maquette de bulletin qui se révèle avec un zoom lent.
+5. LE QUOTIDIEN (~8 s) — Emploi du temps dans un téléphone à gauche ; à droite 4 pastilles
+   qui cascadent : Emploi du temps / Devoirs / Absences & appel / Messagerie + badge
+   « Léger — pensé pour peu de réseau ».
+6. UN ESPACE POUR CHACUN (~11 s) — Rupture LUMINEUSE (fond clair #f8fafc) : 4 cartes rôles
+   qui entrent en quinconce : Direction (pilotage temps réel), Professeurs (moins de
+   paperasse), Élèves (tout dans la poche), Parents (enfin dans la boucle).
+7. CONFIANCE (~7 s) — Retour au navy : bouclier vert au halo pulsant + 3 coches : « Chaque
+   école totalement isolée » / « Accès strictement par rôle » / « Données des mineurs
+   protégées ».
+8. FINAL (~7 s) — « Donnez à votre école la plateforme qu'elle mérite. » + bouton
+   « Inscrire mon école » + logo J qui respire + adresse du site. Fondu de fermeture.
+
+Contraintes d'animation : chaque élément ENTRE en animation (aucun élément ne pop tout
+formé), directions et courbes variées (pas tout depuis le bas), décors animés en continu
+(halos qui pulsent, étoiles qui scintillent, constellation qui dérive). Rythme :
+calme → tension → RÉVÉLATION → démonstration → respiration claire → confiance → final.
+```
+
+---
+
+## 9) Flyer A5 de PROSPECTION (recto-verso, à distribuer partout)
+
+> Différent du flyer n°7 (réservé aux parents d'une école déjà cliente). Celui-ci se
+> distribue « dans la nature » : écoles, commerces, événements. Il doit donner envie
+> ET permettre d'agir (site + contact). Avant de coller le prompt, remplacer
+> `[NUMÉRO WHATSAPP]` par le vrai numéro.
+
+```
+[COLLER LE BLOC DE MARQUE]
+
+Crée un FLYER A5 RECTO-VERSO de prospection pour Jàng, à distribuer largement (écoles
+privées, salons, quartiers). Cible principale : directeurs et fondateurs de collèges/lycées
+privés ; cible secondaire : professeurs et parents qui peuvent en parler à leur école.
+Fond navy premium, accents verts, très lisible à bout de bras (gros titres).
+
+RECTO — donner envie en 5 secondes :
+- En haut : logo J + « Jàng » + baseline « La vie scolaire, simplifiée. »
+- Grande accroche : « Toute votre école dans votre poche. »
+- Sous-accroche : « Notes, bulletins, emploi du temps, devoirs, absences, messagerie —
+  une seule plateforme, pensée pour les écoles du Sénégal. »
+- Grille de 6 fonctions avec pictos fins (PAS d'emojis) : Notes & moyennes ·
+  Bulletins PDF automatiques (mention, rang, moyenne de classe) · Emploi du temps ·
+  Devoirs · Appel & absences · Messagerie école-familles.
+- Bandeau bas : « 100 % français · Léger, marche avec peu de réseau · Sur n'importe
+  quel téléphone » + www.jang.sn en gros + QR code (placeholder) vers le site.
+
+VERSO — convaincre le directeur et déclencher le contact :
+- Titre : « Directeur, directrice : votre école ne débourse rien. »
+- 3 arguments en cartes :
+  1. « Les parents paient » : un petit supplément de ~400-500 F CFA par élève et par
+     mois ajouté aux frais de scolarité — l'école collecte, la plateforme travaille.
+  2. « Vos bulletins, sans recopie » : moyennes (devoirs + composition), rangs et
+     mentions calculés automatiquement, bulletins imprimables pour toute une classe.
+  3. « Vos données protégées » : chaque école totalement isolée, accès strictement
+     par rôle, données des élèves mineurs traitées avec soin.
+- Encadré vert « Offre rentrée 2026 » : installation de votre école + formation de
+  vos professeurs INCLUSES pour les premières écoles inscrites.
+- Appel à l'action final : « Demandez une démonstration de 15 minutes sur votre
+  téléphone » + WhatsApp [NUMÉRO WHATSAPP] + www.jang.sn + QR code.
+- Bas de page : logo + « “Jàng” — apprendre, en wolof ».
 ```

@@ -66,6 +66,20 @@ npx tsc --noEmit   # vérifier qu'il n'y a pas d'erreur TypeScript
 - **Migrations SQL** : les fichiers `supabase/migrations/000X_*.sql` se lancent à la main dans
   le SQL Editor de Supabase (copier-coller + Run), pas via la CLI.
 
+## Commercial — rentrée 2026
+
+- Objectif et plan : mémoire Claude `objectif-commercial-rentree-2026`.
+- **Déclaration CDP à faire avant la rentrée d'octobre** (décidé 11/07) : la loi n° 2008-12
+  impose de déclarer le traitement de données personnelles à la CDP (cdp.sn) avant mise en
+  œuvre. Mentionner l'hébergement hors Sénégal (Supabase/Vercel). Une fois le récépissé
+  obtenu → argument de vente (slide « Protection des données »).
+- **Liste des écoles cibles** : `docs/ecoles-cibles.md` (top 10 Kaolack + réserve, suivi de
+  statut ⚪→🟡→🟢→✅ à tenir à jour après chaque contact).
+- Supports de vente : prompts dans `docs/prompts-claude-design.md` (n°9 = flyer A5 de prospection).
+- **Kit école pilote (directeur ami)** : `docs/pilote-directeur-ami.md` (message WhatsApp, déroulé
+  du RDV démo, checklist d'onboarding + journal à tenir à jour).
+- Vidéo promo officielle : `promo-video/Jàng-Video-Promo.mp4`.
+
 ## Avancement
 
 > Le détail à jour (étape en cours + point de reprise) vit dans la mémoire Claude

@@ -77,8 +77,12 @@ export async function justifierAbsence(formData: FormData) {
   const base = "/espace/enfants/" + enfantId + "/absences";
 
   if (!id) redirect(base + "?erreur=" + encodeURIComponent("Absence introuvable."));
-  if (motif.length > 500) {
-    redirect(base + "?erreur=" + encodeURIComponent("Le motif est trop long (500 caractères max)."));
+
+  // Liste fermée (doit rester en phase avec le <select> de ListeAbsences.tsx et
+  // la contrainte SQL de la migration 0025). Empêche toute donnée de santé libre.
+  const MOTIFS_AUTORISES = ["Familial", "Médical", "Autre"];
+  if (!MOTIFS_AUTORISES.includes(motif)) {
+    redirect(base + "?erreur=" + encodeURIComponent("Motif invalide."));
   }
 
   const { error } = await supabase

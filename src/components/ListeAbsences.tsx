@@ -83,13 +83,21 @@ export function ListeAbsences({
               <form action={justifierAbsence} className="mt-3 flex flex-col gap-2">
                 <input type="hidden" name="id" value={a.id} />
                 <input type="hidden" name="enfant_id" value={justification.enfantId} />
-                <textarea
+                {/* Liste fermée (pas de saisie libre) : évite de collecter une
+                    donnée de santé détaillée — cf. docs/declaration-cdp.md (D3). */}
+                <select
                   name="motif"
-                  rows={2}
-                  maxLength={500}
-                  placeholder="Motif de l'absence (ex. rendez-vous médical)…"
-                  className="rounded-xl border border-slate-700 bg-slate-800/60 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 outline-none transition focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
-                />
+                  defaultValue=""
+                  required
+                  className="rounded-xl border border-slate-700 bg-slate-800/60 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
+                >
+                  <option value="" disabled>
+                    Choisir un motif…
+                  </option>
+                  <option value="Familial">Familial</option>
+                  <option value="Médical">Médical</option>
+                  <option value="Autre">Autre</option>
+                </select>
                 <div className="flex justify-end">
                   <button className="rounded-xl bg-green-500 px-4 py-1.5 text-sm font-semibold text-slate-900 transition hover:bg-green-400">
                     Justifier
