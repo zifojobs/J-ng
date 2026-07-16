@@ -11,7 +11,7 @@
 
 | # | École | Profil | Taille est. / palier | Contact connu | Angle d'approche | Statut |
 |---|---|---|---|---|---|---|
-| 1 | **École pilote (directeur ami)** | — | — | Saïbo | Gratuite contre témoignage. **À verrouiller en premier** : tout le reste s'appuie dessus. | 🔴 à caler |
+| 1 | **École pilote (directeur ami)** | — | — | Saïbo | Gratuite contre témoignage. **À verrouiller en premier** : tout le reste s'appuie dessus. | 🟡 message + vidéo promo envoyés (16/07), en attente de réponse |
 | 2 | **Cours Privés Mboutou Sow** | Institution de Kaolack, +50 ans, Léona. Élémentaire → secondaire. | Grande (>400) → 120k F/mois | +221 33 941 13 37 · mboutousow.com · FB | Prestige : « la plus grande école de Kaolack mérite l'outil le plus moderne ». Gros volume élèves = gros enjeu bulletins/notes. | ⚪ à contacter |
 | 3 | **Collège Pie XII** | Catholique, fondé 1958, Square Bongré. Directeur : Frère Marcelin Coly. Veut s'étendre au supérieur. | Grande (>400) → 120k F/mois | Préscolaire : 33 941 36 86 · FB `collegepiexii` | École en croissance/modernisation (bâtiment neuf 70M, projet supérieur) → argument « pilotage et image moderne ». | ⚪ à contacter |
 | 4 | **Sen Collège La Réussite** | Cours privés laïcs, moyen/secondaire. | À évaluer sur place | — (terrain/FB) | Nom orienté résultats → argument suivi des moyennes + bulletins automatiques. | ⚪ à contacter |
@@ -21,6 +21,12 @@
 | 8 | **CP Les Pédagogues du Saloum** | Cours privés, moyen/secondaire. | À évaluer | — (terrain) | Équipe « pédagogues » → angle : moins de paperasse pour les profs. | ⚪ à contacter |
 | 9 | **Institut Islamique Al Azhar (CFA)** | Franco-arabe, réseau structuré, moyen/secondaire. | Grande probable | — (terrain, Médina Baye) | Réseau = si une école signe, potentiel multi-écoles. Interface FR OK, wolof plus tard = argument. | ⚪ à contacter |
 | 10 | **Institut Islamique Gaïndé Fatma** | Franco-arabe historique (Médina Baye), préscolaire → secondaire. | Grande probable | — (terrain) | Institution prestigieuse de Kaolack ; même logique réseau que Al Azhar. | ⚪ à contacter |
+
+## Contacts hors liste (relations personnelles)
+
+| École | Profil | Contact connu | Angle d'approche | Statut |
+|---|---|---|---|---|
+| **Groupe Scolaire Barack Obama** (Kaolack) | Directeur déjà rencontré il y a ~2 ans, intéressé à l'époque par une plateforme de gestion scolaire, sans suite. | Via l'ami qui les avait mis en relation | Client payant direct (pas le pilote gratuit, déjà pris) — réactivation contact + Jàng maintenant construit et en ligne | 🟡 message direct au directeur + relance de l'ami envoyés (16/07), en attente des deux réponses |
 
 ## Réserve (si refus dans le top 10 — tous privés moyen/secondaire à Kaolack)
 

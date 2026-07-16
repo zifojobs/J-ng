@@ -96,3 +96,6 @@ Format libre : photos de listes papier, Excel, ou dictées vocales — tout conv
   Info Saïbo : le directeur prépare le brevet (début 14/07) → **envoyer le message WhatsApp
   vers le 14-15/07**. Conseils démo : se connecter avant le RDV (redirection ~2 s) ; re-tester
   au doigt le bouton « Supprimer » d'une note.
+- 16/07/2026 : **message WhatsApp + vidéo promo envoyés** au directeur ami. Pas encore de
+  réponse. Prochaine étape : relance si silence après quelques jours, sinon caler le RDV
+  (point 3 du déroulé) dès qu'il répond.

@@ -31,7 +31,7 @@ export async function envoyerEmailBienvenueDirecteur(params: {
 <div style="margin:0;padding:24px;background:#0f172a;font-family:Arial,Helvetica,sans-serif;color:#e2e8f0;">
   <div style="max-width:520px;margin:0 auto;">
     <div style="text-align:center;margin-bottom:24px;">
-      <span style="display:inline-block;width:48px;height:48px;line-height:48px;border-radius:12px;background:#22c55e;color:#0f172a;font-size:24px;font-weight:bold;">J</span>
+      <span style="display:inline-block;font-size:40px;font-weight:800;color:#22c55e;">J</span>
       <h1 style="margin:12px 0 4px;font-size:22px;color:#ffffff;">Bienvenue sur Jàng</h1>
     </div>
     <div style="background:rgba(30,41,59,0.6);border:1px solid #334155;border-radius:16px;padding:24px;">
