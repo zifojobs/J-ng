@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { envoyerDemande } from "./actions";
+import { SubmitButton } from "@/components/SubmitButton";
 
 export default async function InscriptionPage({
   searchParams,
@@ -122,9 +123,9 @@ export default async function InscriptionPage({
                 <Link href="/login" className="text-sm text-slate-400 hover:underline">
                   ← Connexion
                 </Link>
-                <button className="rounded-xl bg-green-500 px-4 py-2 font-semibold text-slate-900 transition hover:bg-green-400">
+                <SubmitButton pendingText="Envoi en cours…">
                   Envoyer la demande
-                </button>
+                </SubmitButton>
               </div>
             </form>
           </>

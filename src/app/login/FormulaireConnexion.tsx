@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { login } from "./actions";
+import { SubmitButton } from "@/components/SubmitButton";
 
 // Formulaire de connexion avec deux onglets :
 // - « Email » : pour les admins et les professeurs (champ identifiant = email).
@@ -122,12 +123,12 @@ export default function FormulaireConnexion({ erreur }: { erreur?: string }) {
         />
       </div>
 
-      <button
-        type="submit"
-        className="mt-2 rounded-xl bg-green-500 px-4 py-3 font-semibold text-slate-900 transition hover:bg-green-400 active:bg-green-600"
+      <SubmitButton
+        pendingText="Connexion…"
+        className="mt-2 rounded-xl bg-green-500 px-4 py-3 font-semibold text-slate-900 transition hover:bg-green-400 active:bg-green-600 disabled:cursor-not-allowed disabled:bg-green-500/50"
       >
         Se connecter
-      </button>
+      </SubmitButton>
     </form>
   );
 }
